@@ -220,3 +220,95 @@ Heart.prototype.draw = function() {
         )
     }
 }
+class Player extends Sprite {
+    constructor({ position, imgSrc, scale = 1, numFrames = 1, sprites }) {
+        super({ position: position, imageSrc: imgSrc, scale, numFrames })
+        this.velocity = {
+            x: 0,
+            y: 1
+        },
+        this.sides = {
+            bottom: this.position.y + this.height,
+            right: this.position.x + this.width,
+            left: this.position.x,
+            top: this.position.x
+        },
+        this.lastKey,
+        this.sprites = sprites,
+        this.direction = 'right',
+        this.isAlive = true,
+        this.cameraBox = {
+            position: {
+                x: this.position.x,
+                y: this.position.y
+            },
+            width: 200,
+            height: 100
+        },
+        this.hitBox = {
+            position: {
+                x: this.position.x,
+                y: this.position.y,
+            },
+            width: 14,
+            height: 24.5
+        },
+        this.isGrounded = false,
+        this.coinsCollected = 0,
+        this.hearts = [],
+        this.life = 3.00,
+        this.hurtSound = new Audio ('./audio/zelda_hit.mp3'),
+        this.hurting = false
+        for (const key in this.sprites) {
+            this.sprites[key].image = new Image()
+            this.sprites[key].image.src = this.sprites[key].spriteSrc
+        }
+        for (let i = 0; i < 3; i++) {
+            this.hearts[i] = new Heart({
+                position: {
+                    x: canvas.width - 50 - i * 45,
+                    y: 20
+                }
+            })
+        }
+    }
+}
+Player.prototype.panCameraLeft = function() {
+    let cameraRight = this.cameraBox.position.x + this.cameraBox.width
+    if (cameraRight >= currentLevel.mapWidth * TILE_DIM) {
+        return
+    }
+    while (cameraRight >= (scaledCanvas.width + Math.abs(translateValues.position.x))) {
+        translateValues.position.x -= this.velocity.x
+    }
+}
+Player.prototype.panCameraRight = function() {
+    if (this.cameraBox.position.x <= 0) {
+        return;
+    }
+    while (this.cameraBox.position.x <= Math.abs(translateValues.position.x)) {
+        translateValues.position.x -= this.velocity.x;
+    }
+}
+Player.prototype.panCameraDown = function() {
+    if ((this.cameraBox.position.y + this.velocity.y) <= 0) {
+        return;
+    }
+    while (this.cameraBox.position.y <= Math.abs(translateValues.position.y)) {
+        translateValues.position.y -= this.velocity.y
+    }
+}
+Player.prototype.panCameraUp = function() {
+    if ((this.cameraBox.position.y + this.cameraBox.height + this.velocity.y) >= currentLevel.mapHeight * TILE_DIM) {
+        return;
+    }
+    while ((this.cameraBox.position.y + this.cameraBox.height) >= (Math.abs(translateValues.position.y) + scaledCanvas.height)) {
+        translateValues.position.y -= this.velocity.y
+    }
+}
+Player.prototype.updateBoxes = function() {
+    this.cameraBox.position.x = this.position.x - 80
+    this.cameraBox.position.y = this.position.y - 20
+    this.hitBox.position.x = this.position.x + 7
+    this.hitBox.position.y = this.position.y + 10
+}
