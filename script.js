@@ -125,3 +125,98 @@ function checkForHorizontalCollissions(object) {
         }
     }
 }
+function checkForVerticalCollissions(object) {
+    for(let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
+        const currentBlock = currentLevel.collissionBlocksArray[i]
+        if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
+            if(object.velocity.y > 0) {
+                object.velocity.y = 0;
+                object.isGrounded=true;
+             object.position.y = currentBlock.position.y -object.height-0.02
+                break
+            }
+            if(object.velocity.y<0) {
+                object.velocity.y=0;
+                object.position.y = currentBlock.position.y  + currentBlock.height + 0.02
+                break
+            }
+        }
+    }
+    for(let i=0; i< currentLevel.platformBlocksArray.length; i++) {
+        const currentPlatform = currentLevel.platformBlocksArray[i]
+        if ( platformCollission({ obj1: object, obj2: currentPlatform}) ) {
+            if(object.velocity.y > 0) {
+                object.velocity.y = 0;
+                object.isGrounded=true;
+                const offset = object.position.y - object.position.y + object.height
+                object.position.y = currentPlatform.position.y -offset -0.02
+                break
+            }
+        }
+    }
+}
+class Coin extends Sprite {
+    constructor({position, imgSrc = './img/coin.png', scale=1.5, numFrames = 14, value=1, animationSpeed = 10}) {
+        super( {position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed})
+        this.isCollected = false
+        this.value = value
+    }
+    update() {
+        if(! this.isCollected) {
+            this.draw();
+            this.animate();
+        }
+    }
+}
+class Heart extends Sprite {
+    constructor({position, imgSrc = './img/heart/heart_sheet.png', scale=2.5, numFrames = 5}) {
+        super( {position: position, imageSrc: imgSrc , scale, numFrames})
+        this.filled = 1.0,
+        this.borderImg = new Image()
+        this.borderImg.src= './img/heart/border.png'
+    }
+}
+Heart.prototype.hurt = function() {
+    if(this.filled === 0) {
+        return
+    } else {
+        this.currentFrame++
+        this.filled -= 0.25
+   }
+}
+Heart.prototype.heal = function() {
+    if(this.filled === 1 ) {
+        return;
+    } else {
+        this.currentFrame --;
+        this.filled += 0.25;
+    }
+}
+Heart.prototype.draw = function() {
+    if (!this.loaded )
+        return;
+    else {
+        canvasContext.drawImage(
+            this.borderImg,
+            0,
+            0,
+            this.borderImg.width,
+            this.borderImg.height,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height
+        )
+        canvasContext.drawImage(
+            this.image,
+            this.currentFrame * (this.image.width / this.numFrames),
+            0,
+            this.image.width / this.numFrames,
+            this.image.height,
+            this.position.x,
+            this.position.y,
+            this.width ,
+            this.height
+        )
+    }
+}
