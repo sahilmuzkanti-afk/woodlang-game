@@ -1,0 +1,30 @@
+* {
+box-sizing: border-box;
+font-family: 'Syne Mono', monospace;
+}
+h1 { color: whitesmoke; }
+body { display: flex; justify-content: center; background-color: #3d5671; }
+#outermost { display: inline-block; }
+#coinicon { width: 50px; height: auto; }
+.textBox {
+width: 100%; display: flex; align-items: center;
+text-align: center; justify-content: center;
+}
+#mainDiv { position: relative; display: inline-block; }
+#scoreInfo {
+position: absolute; color: white; display: none;
+align-items: center; justify-content: center;
+top: 0; bottom: 0; right: 0; left: 0; font-size: 40px;
+}
+.coinBar { height: 30px; width: 100%; position: absolute; top: 0; right: 0; bottom: 0; border-radius: 10px; }
+.coinBarContainer { position: relative; align-items: flex-end; width: 100%; border: 1px solid white; border-radius: 10px; margin: 10px; }
+.coinBarBg { background-color: rgb(112, 112, 112); height: 30px; width: 100%; background-image: url("./img/healthbar_bg.png"); background-blend-mode: luminosity; border-radius: 10px; }
+#coinBar { background-color: #e4d053; left: 0; width: 0%; transition: width .45s ease; }
+#sidediv { height: 100%; padding-left: 5px; margin-left: 5px; display: block; }
+#game { display: flex; }
+#refreshBtn { background-color: #6d7eaf; }
+#pauseBtn { background-color: #75c9b1; }
+button { border-radius: 40px; transition: transform .7s ease-in-out; }
+button:hover { transform: rotate(360deg); background-color: #d3e6ec; }
+.btnImg { width: 60px; height: 60px; }
+.btnContainer { padding-bottom: 15px; }

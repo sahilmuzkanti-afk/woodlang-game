@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Woodland Heights</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="./img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="outermost">
+<div class="textBox"><h1>Woodland Heights</h1></div>
+<div class="textBox"><p style="color: antiquewhite;">Your goal is simple.<br>Collect all the coins and stay alive.</p></div>
+<div class="textBox" id="topBar">
+<img src="./img/coin_icon.png" alt="coinicon" id="coinicon">
+<div class="coinBarContainer"><div id="coinBar" class="coinBar"></div><div class="coinBarBg"></div></div>
+</div>
+<br><br>
+<div id="game">
+<div id="mainDiv"><div id="scoreInfo">Game Paused</div><canvas id="canvas"></canvas></div>
+<div id="sidediv">
+<div class="btnContainer"><button id="refreshBtn" onclick="window.restart && window.restart()"><img src="./img/reload.png" alt="reload button" class="btnImg" id="reloadBtnImg"></button></div>
+<div class="btnContainer"><button id="pauseBtn" onclick="window.pause && window.pause()"><img src="./img/pause.png" alt="pause button" class="btnImg" id="pauseBtnImg"></button></div>
+</div>
+</div>
+</div>
+<script src="script.js" defer></script>
+</body>
+</html>
