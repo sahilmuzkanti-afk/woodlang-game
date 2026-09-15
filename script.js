@@ -772,3 +772,96 @@ function setCoinBar(percent) {
     const value = Math.max(0, Math.min(100, percent))
     document.getElementById('coinBar').style.width = value + '%'
 }
+Level.prototype.setupLevel = function(levelNo) {
+    switch (levelNo) {
+        case 1:
+            this.image.src = './img/map1.png'
+            this.levelNo = levelNo;
+            this.mapWidth = 70;
+            this.mapHeight = 40;
+            this.waterLevel = 560;
+            this.playerStartingYPos = 370;
+            this.yTranslateBg = scaledCanvas.height - (this.mapHeight * TILE_DIM);
+            this.floorCollissions2D.length=0;
+            for (let i = 0; i < floorCollissionsMap1.length; i += this.mapWidth) {
+                this.floorCollissions2D.push(floorCollissionsMap1.slice(i, i +this.mapWidth))
+            }
+            this.platformCollissions2D.length=0;
+            for (let i = 0; i < platformCollissionsMap1.length; i += this.mapWidth) {
+                this.platformCollissions2D.push(platformCollissionsMap1.slice(i, i + this.mapWidth))
+            }
+            this.coins2D.length= 0;
+            for (let i = 0; i < coinsMap1.length; i += this.mapWidth) {
+                this.coins2D.push(coinsMap1.slice(i, i + this.mapWidth))
+            }
+            this.slimes2D.length =0;
+            for (let i = 0; i < slimesMap1.length; i += this.mapWidth) {
+                this.slimes2D.push(slimesMap1.slice(i, i + this.mapWidth))
+            }
+            this.initArrays();
+            break;
+            case 2:
+                this.image.src = './img/map2.png'
+                this.levelNo = levelNo;
+                this.mapWidth = 100;
+                this.mapHeight = 25;
+                this.waterLevel = 360;
+                this.playerStartingYPos = 0;
+                this.yTranslateBg = 0;
+                this.floorCollissions2D.length=0;
+                for (let i = 0; i < floorCollissionsMap2.length; i += this.mapWidth) {
+                    this.floorCollissions2D.push(floorCollissionsMap2.slice(i, i +this.mapWidth))
+                }
+                this.platformCollissions2D.length=0;
+                for (let i = 0; i < platformCollissionsMap2.length; i += this.mapWidth) {
+                    this.platformCollissions2D.push(platformCollissionsMap2.slice(i, i + this.mapWidth))
+                }
+                this.coins2D.length= 0;
+                for (let i = 0; i < coinsMap2.length; i += this.mapWidth) {
+                    this.coins2D.push(coinsMap2.slice(i, i + this.mapWidth))
+                }
+                this.slimes2D.length =0;
+                for (let i = 0; i < slimesMap2.length; i += this.mapWidth) {
+                    this.slimes2D.push(slimesMap2.slice(i, i + this.mapWidth))
+                }
+                this.initArrays();
+                break;
+    }
+}
+Level.prototype.pausedDraw = function() {
+    if (!this.loaded)
+        return;
+    else {
+        canvasContext.drawImage(
+            this.image,
+            this.currentFrame * (this.image.width / this.numFrames),
+            0,
+            this.image.width / this.numFrames,
+            this.image.height,
+            this.position.x,
+            this.position.y,
+            this.width ,
+            this.height
+        )
+    }
+    this.collissionBlocksArray.forEach(collissionBlick => {
+        collissionBlick.draw();
+    })
+    this.platformBlocksArray.forEach(platform => {
+        platform.draw();
+    })
+    this.coinsArray.forEach(coin => {
+        if(!coin.isCollected)
+            coin.draw();
+    })
+    this.slimesArray.forEach(slime => {
+        slime.draw();
+    })
+}
+Level.prototype.clearObjects = function() {
+    this.collissionBlocksArray.length = 0
+    this.platformBlocksArray.length = 0
+    this.coinsArray.length = 0
+    this.slimesArray.length = 0
+    this.numCoins = 0
+}
