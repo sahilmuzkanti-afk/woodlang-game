@@ -495,3 +495,99 @@ function onLeftOfSlime({ player, slime }) {
     else
         return false;
 }
+Player.prototype.checkForSlimesCollissions = function() {
+    for (let i = 0; i < currentLevel.slimesArray.length; i++) {
+        const currentSlime = currentLevel.slimesArray[i]
+        if (detectCollission({ obj1: this.hitBox, obj2: currentSlime })) {
+            if (this.velocity.y > 0 && !this.isGrounded && currentSlime.isAlive && (this.position.y + this.height < currentSlime.position.y + currentSlime.height - 10)) {
+               currentLevel.slimesArray[i].setSprite("death")
+               currentLevel.slimesArray[i].velocity.x = 0;
+               currentLevel.slimesArray[i].hurtSound.play();
+            }
+            else {
+                switch (currentSlime.direction) {
+                    case 'left':
+                        currentLevel.slimesArray[i].setSprite("attackLeft");
+                        break;
+                    case 'right':
+                        currentLevel.slimesArray[i].setSprite("attackRight");
+                        break;
+                }
+                if (!this.hurting &&  currentLevel.slimesArray[i].image !=  currentLevel.slimesArray[i].sprites.death.image) {
+                    for (let i = 2; i >= 0; i--) {
+                        if (this.hearts[i].filled !== 0) {
+                            this.hearts[i].hurt();
+                            this.hurting = true;
+                            this.hurtSound.play();
+                            setTimeout(() => {
+                                this.hurting = false;
+                            }, 500)
+                            switch (this.direction) {
+                                case 'left':
+                                    this.setSprite("hurtLeft");
+                                    break;
+                                case 'right':
+                                    this.setSprite("hurtRight");
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } else if (inSlimeRange({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
+            if (onLeftOfSlime({ player: this, slime: currentSlime })) {
+                currentLevel.slimesArray[i].velocity.x = -MOVEMENT_SPEED;
+                currentLevel.slimesArray[i].direction = 'left';
+                currentLevel.slimesArray[i].setSprite("attackLeft");
+            } else if (onRightOfSlime({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
+                currentLevel.slimesArray[i].velocity.x = MOVEMENT_SPEED;
+                currentLevel.slimesArray[i].direction = 'right';
+                currentLevel.slimesArray[i].setSprite("attackRight");
+            }
+        } else {
+            switch (currentSlime.direction) {
+                case 'left':
+                    currentLevel.slimesArray[i].setSprite("idleLeft");
+                    break;
+                case 'right':
+                    currentLevel.slimesArray[i].setSprite("idleRight");
+                    break;
+            }
+            currentLevel.slimesArray[i].velocity.x = 0;
+        }
+    }
+    for (let i = 0; i < currentLevel.platformBlocksArray.length; i++) {
+        const currentPlatform = currentLevel.platformBlocksArray[i]
+        if (platformCollission({ obj1: this.hitBox, obj2: currentPlatform })) {
+            if (this.velocity.y > 0) {
+                this.velocity.y = 0;
+                this.isGrounded = true;
+                const offset = this.hitBox.position.y - this.position.y + this.hitBox.height
+                this.position.y = currentPlatform.position.y - offset - 0.02
+                break
+            }
+        }
+    }
+}
+function inSlimeRange({ player, slime }) {
+    if (player.position.y + ENEMY_VERTICAL_RANGE >= slime.position.y && player.position.y - ENEMY_VERTICAL_RANGE <= slime.position.y) {
+        if(onRightOfSlime({player, slime})) {
+            if(player.position.x < slime.position.x + slime.width*3) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if(onLeftOfSlime({player,slime})) {
+            if(player.position.x > slime.position.x - slime.width*2) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
