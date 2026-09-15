@@ -405,3 +405,93 @@ Player.prototype.checkForCoinCollection = function() {
         }
     }
 }
+Player.prototype.setSprite = function(sprite) {
+    if((this.image == this.sprites.hurtLeft.image  || this.image == this.sprites.hurtRight.image ) && this.hurting) {
+        return;
+    }
+    if (this.image == this.sprites.death.image) {
+        if (this.image == this.sprites.death.image && this.currentFrame === (this.sprites.death.numFrames - 1)) {
+            this.isAlive = false;
+        }
+        return
+    }
+    if ( (this.image == this.sprites.death.image && this.currentFrame < this.sprites.death.numFrames - 1)
+     ) {
+        return
+    }
+    switch (sprite) {
+        case 'idleLeft':
+            if (this.image !== this.sprites.idleLeft.image) {
+                this.image = this.sprites.idleLeft.image
+                this.numFrames = this.sprites.idleLeft.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'idleRight':
+            if (this.image !== this.sprites.idleRight.image) {
+                this.image = this.sprites.idleRight.image
+                this.numFrames = this.sprites.idleRight.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'runLeft':
+            if (this.image !== this.sprites.runLeft.image) {
+                this.image = this.sprites.runLeft.image
+                this.numFrames = this.sprites.runLeft.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'runRight':
+            if (this.image !== this.sprites.runRight.image) {
+                this.image = this.sprites.runRight.image
+                this.numFrames = this.sprites.runRight.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'hurtRight':
+            if (this.image !== this.sprites.hurtRight.image) {
+                this.image = this.sprites.hurtRight.image
+                this.numFrames = this.sprites.hurtRight.numFrames
+                this.currentFrame = 1
+            }
+            break;
+        case 'hurtLeft':
+            if (this.image !== this.sprites.hurtLeft.image) {
+                this.image = this.sprites.hurtLeft.image
+                this.numFrames = this.sprites.hurtLeft.numFrames
+                this.currentFrame = 1
+            }
+            break;
+        case 'death':
+            if (this.image !== this.sprites.death.image) {
+                this.image = this.sprites.death.image
+                this.numFrames = this.sprites.death.numFrames
+                this.currentFrame = 0
+            }
+            break;
+    }
+}
+function randomizeDirection() {
+    let rand = Math.round( Math.random() );
+    if(rand%2 === 0 ) {
+        return 'right';
+    } else {
+        return 'left';
+    }
+}
+function playGetCoin() {
+    var getCoin = new Audio('./audio/oot_rupee_get.mp3')
+    getCoin.play();
+    getCoin.onended = function(){
+        this.currentSrc = null;
+        this.src = "";
+        this.srcObject = null;
+        this.remove();
+    };
+}
+function onLeftOfSlime({ player, slime }) {
+    if (player.position.x < slime.position.x)
+        return true;
+    else
+        return false;
+}
