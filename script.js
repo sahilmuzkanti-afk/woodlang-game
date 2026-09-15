@@ -591,3 +591,95 @@ function inSlimeRange({ player, slime }) {
         return false;
     }
 }
+class Enemy extends Sprite {
+    constructor({position, imgSrc, scale=1, numFrames = 1, sprites, animationSpeed = ANIMATION_SPEED}) {
+        super( {position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed})
+        this.velocity = {
+            x: 0,
+            y: 0
+        },
+        this.sprites=sprites,
+        this.direction = randomizeDirection(),
+        this.isAlive = true,
+        this.hurtSound=  new Audio('./audio/splat.mp3')
+        for (const key in this.sprites) {
+            this.sprites[key].image = new Image()
+            this.sprites[key].image.src = this.sprites[key].spriteSrc
+        }
+    }
+}
+Enemy.prototype.applyGravity  = function() {
+    this.position.y += this.velocity.y
+    this.velocity.y += GRAVITY
+}
+Enemy.prototype.update = function() {
+    this.draw();
+    if(this.isAlive) {
+        this.animate();
+        this.position.x += this.velocity.x;
+        checkForHorizontalCollissions(this);
+        this.applyGravity();
+        checkForVerticalCollissions(this);
+    }
+}
+function createSlime(xpos, ypos) {
+    const slime = new Enemy( {
+        position: {
+            x: xpos,
+            y: ypos - 11
+        },
+        imgSrc: './img/Slime/Idle_Left.png',
+        scale: 1.3,
+        numFrames: 4,
+        sprites: {
+            death: {
+                spriteSrc: './img/Slime/Death.png',
+                numFrames: 4
+            },
+            attackLeft: {
+                spriteSrc: './img/Slime/Attack_Left.png',
+                numFrames: 5
+            },
+            attackRight: {
+                spriteSrc: './img/Slime/Attack_Right.png',
+                numFrames: 5
+            },
+            idleLeft: {
+                spriteSrc: './img/Slime/Idle_Left.png',
+                numFrames: 4
+            },
+            idleRight: {
+                spriteSrc: './img/Slime/Idle_Right.png',
+                numFrames: 4
+            },
+        },
+    })
+    return slime;
+}
+function playGameOver() {
+    var gameOverSound = new Audio('./audio/zelda_secret_sound.mp3')
+    gameOverSound.play();
+    gameOverSound.onended = function(){
+        this.currentSrc = null;
+        this.src = "";
+        this.srcObject = null;
+        this.remove();
+    };
+}
+function onRightOfSlime({ player, slime }) {
+    if (player.position.x > slime.position.x + slime.width)
+        return true;
+    else
+        return false;
+}
+function playVictory() {
+    var victorySound = new Audio('./audio/rupee-collect.mp3')
+    victorySound.play();
+    victorySound.onended = function(){
+        this.currentSrc = null;
+        this.src = "";
+        this.srcObject = null;
+        this.remove();
+    };
+}
+
