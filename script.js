@@ -312,3 +312,96 @@ Player.prototype.updateBoxes = function() {
     this.hitBox.position.x = this.position.x + 7
     this.hitBox.position.y = this.position.y + 10
 }
+Player.prototype.update = function() {
+    this.updateBoxes()
+    this.sides.bottom = this.position.y + this.height;
+    this.draw();
+    if (this.isAlive)
+        this.animate();
+    else {
+        this.velocity.x = 0
+        this.velocity.y = 0
+    }
+    if (this.position.x + this.width + this.velocity.x >= currentLevel.mapWidth * TILE_DIM ||
+        this.position.x + this.velocity.x <= 0) {
+        this.velocity.x = 0;
+    }
+    if (this.position.y + this.height + this.velocity.y >= currentLevel.mapHeight * TILE_DIM) {
+        this.velocity.y = 0;
+    }
+    this.position.x += this.velocity.x
+    if (this.velocity.y > 0) {
+        this.isGrounded = false;
+    }
+    this.life = 0;
+    this.hearts.forEach(heart => {
+        this.life += heart.filled;
+    })
+    if (this.life === 0 || (this.position.y + this.height) > currentLevel.waterLevel) {
+        this.setSprite('death');
+    }
+    this.updateBoxes()
+    checkForHorizontalCollissions(this);
+    this.applyGravity();
+    this.updateBoxes()
+    this.checkForVerticalCollissions()
+    this.checkForSlimesCollissions()
+    this.checkForCoinCollection()
+}
+Player.prototype.applyGravity = function() {
+    this.position.y += this.velocity.y
+    this.velocity.y += GRAVITY
+}
+Player.prototype.resurrect = function() {
+    this.coinsCollected = 0;
+    this.isAlive = true;
+    this.image = this.sprites.idleLeft.image
+    this.numFrames = this.sprites.idleLeft.numFrames
+    this.currentFrame = 0
+    this.hearts.forEach(heart => {
+        while (heart.filled !== 1) {
+            heart.heal();
+        }
+    })
+}
+Player.prototype.checkForVerticalCollissions = function() {
+    for (let i = 0; i < currentLevel.collissionBlocksArray.length; i++) {
+        const currentBlock = currentLevel.collissionBlocksArray[i]
+        if (detectCollission({ obj1: this, obj2: currentBlock })) {
+            if (this.velocity.y > 0) {
+                this.velocity.y = 0;
+                this.isGrounded = true;
+                this.position.y = currentBlock.position.y - this.height - 0.02
+                break
+            }
+            if (this.velocity.y < 0) {
+                this.velocity.y = 0;
+                this.position.y = currentBlock.position.y + currentBlock.height + 0.02
+                break
+            }
+        }
+    }
+    for (let i = 0; i < currentLevel.platformBlocksArray.length; i++) {
+        const currentPlatform = currentLevel.platformBlocksArray[i]
+        if (platformCollission({ obj1: this.hitBox, obj2: currentPlatform })) {
+            if (this.velocity.y > 0) {
+                this.velocity.y = 0;
+                this.isGrounded = true;
+                const offset = this.hitBox.position.y - this.position.y + this.hitBox.height
+                this.position.y = currentPlatform.position.y - offset - 0.02
+                break
+            }
+        }
+    }
+}
+Player.prototype.checkForCoinCollection = function() {
+    for (let i = 0; i < currentLevel.coinsArray.length; i++) {
+        const currentCoin = currentLevel.coinsArray[i]
+        if (detectCollission({ obj1: this.hitBox, obj2: currentCoin }) && currentCoin.isCollected == false) {
+            currentLevel.coinsArray[i].isCollected = true;
+            playGetCoin()
+            this.coinsCollected++;
+        setCoinBar((this.coinsCollected / currentLevel.numCoins) * 100)
+        }
+    }
+}
