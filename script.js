@@ -682,4 +682,93 @@ function playVictory() {
         this.remove();
     };
 }
-
+Enemy.prototype.setSprite = function(sprite) {
+    if (this.image == this.sprites.death.image) {
+        if (this.image == this.sprites.death.image && this.currentFrame === (this.sprites.death.numFrames-1) ) {
+            this.isAlive = false;
+        }
+        return
+    }
+    if (this.image === this.sprites.death.image && this.currentFrame < this.sprites.death.numFrames - 1) {
+        return
+    }
+    if (sprite != 'death' && (this.image === this.sprites.attackLeft.image || this.image === this.sprites.attackRight.image) && this.currentFrame < this.sprites.attackLeft.numFrames - 1) {
+        return
+    }
+    switch (sprite) {
+        case 'idleLeft':
+            if (this.image !== this.sprites.idleLeft.image) {
+                this.image = this.sprites.idleLeft.image
+                this.numFrames = this.sprites.idleLeft.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'idleRight':
+            if (this.image !== this.sprites.idleRight.image) {
+                this.image = this.sprites.idleRight.image
+                this.numFrames = this.sprites.idleRight.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'runLeft':
+            if (this.image !== this.sprites.runLeft.image) {
+                this.image = this.sprites.runLeft.image
+                this.numFrames = this.sprites.runLeft.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'runRight':
+            if (this.image !== this.sprites.runRight.image) {
+                this.image = this.sprites.runRight.image
+                this.numFrames = this.sprites.runRight.numFrames
+                this.currentFrame = 0
+            }
+            break;
+        case 'death':
+            if(this.image!== this.sprites.death.image) {
+                this.image=this.sprites.death.image
+                this.numFrames = this.sprites.death.numFrames
+                this.currentFrame=0
+            }
+            break;
+        case 'attackLeft':
+        if(this.image!== this.sprites.attackLeft.image) {
+            this.image=this.sprites.attackLeft.image
+            this.numFrames = this.sprites.attackLeft.numFrames
+            this.currentFrame=0
+        }
+        break;
+        case 'attackRight':
+        if(this.image!== this.sprites.attackRight.image) {
+            this.image=this.sprites.attackRight.image
+            this.numFrames = this.sprites.attackRight.numFrames
+            this.currentFrame=0
+        }
+        break;
+    }
+}
+class Level extends Sprite {
+    constructor({ position, imgSrc, scale = 1, numFrames = 1, animationSpeed = ANIMATION_SPEED }) {
+        super({ position: position, imageSrc: imgSrc, scale, numFrames, animationSpeed })
+        this.loaded=true,
+        this.paused=false,
+        this.mapWidth = 70,
+        this.mapHeight = 40,
+        this.numCoins = 0,
+        this.levelNo = 1,
+        this.waterLevel = 560,
+        this.playerStartingYPos = scaledCanvas.height - (this.mapHeight * TILE_DIM),
+        this.floorCollissions2D = [],
+        this.platformCollissions2D = [],
+        this.coins2D = [],
+        this.slimes2D = [],
+        this.collissionBlocksArray = [],
+        this.platformBlocksArray = [],
+        this.coinsArray = [],
+        this.slimesArray = []
+    }
+}
+function setCoinBar(percent) {
+    const value = Math.max(0, Math.min(100, percent))
+    document.getElementById('coinBar').style.width = value + '%'
+}
