@@ -996,9 +996,48 @@ const level1Platforms = [
 ]
 
 const level1Coins = [
+    { x: 352, y: 64 },
+    { x: 576, y: 64 },
+    { x: 96, y: 96 },
+    { x: 1088, y: 112 },
+    { x: 432, y: 128 },
+    { x: 576, y: 144 },
+    { x: 960, y: 144 },
+    { x: 48, y: 176 },
+    { x: 432, y: 176 },
+    { x: 256, y: 208 },
+    { x: 656, y: 240 },
+    { x: 960, y: 240 },
+    { x: 48, y: 288 },
+    { x: 384, y: 288 },
+    { x: 608, y: 288 },
+    { x: 656, y: 288 },
+    { x: 704, y: 288 },
+    { x: 848, y: 320 },
+    { x: 48, y: 336 },
+    { x: 656, y: 336 },
+    { x: 848, y: 384 },
+    { x: 1040, y: 416 },
+    { x: 1088, y: 416 },
+    { x: 272, y: 496 },
+    { x: 304, y: 496 },
+    { x: 336, y: 496 },
+    { x: 656, y: 528 },
+    { x: 720, y: 528 },
+    { x: 784, y: 528 },
 ]
 
 const level1Enemies = [
+    { x: 704, y: 112 },
+    { x: 464, y: 272 },
+    { x: 128, y: 304 },
+    { x: 208, y: 400 },
+    { x: 992, y: 416 },
+    { x: 768, y: 432 },
+    { x: 160, y: 480 },
+    { x: 480, y: 544 },
+    { x: 592, y: 544 },
+    { x: 1056, y: 544 },
 ]
 
 const level2Ground = [
@@ -1045,12 +1084,97 @@ const level2Ground = [
 ]
 
 const level2Platforms = [
+    { x: 272, y: 48, width: 80 },
+    { x: 1264, y: 48, width: 48 },
+    { x: 400, y: 64, width: 48 },
+    { x: 688, y: 80, width: 48 },
+    { x: 1472, y: 80, width: 80 },
+    { x: 0, y: 96, width: 64 },
+    { x: 464, y: 112, width: 32 },
+    { x: 1200, y: 112, width: 48 },
+    { x: 752, y: 128, width: 80 },
+    { x: 1344, y: 128, width: 80 },
+    { x: 80, y: 144, width: 80 },
+    { x: 656, y: 160, width: 32 },
+    { x: 1104, y: 160, width: 80 },
+    { x: 1552, y: 160, width: 48 },
+    { x: 512, y: 176, width: 80 },
+    { x: 32, y: 208, width: 80 },
+    { x: 736, y: 208, width: 48 },
+    { x: 912, y: 208, width: 32 },
+    { x: 1168, y: 208, width: 48 },
+    { x: 1424, y: 208, width: 80 },
+    { x: 432, y: 240, width: 48 },
+    { x: 1280, y: 240, width: 48 },
+    { x: 112, y: 256, width: 32 },
+    { x: 672, y: 256, width: 48 },
+    { x: 1392, y: 256, width: 48 },
+    { x: 912, y: 272, width: 32 },
+    { x: 256, y: 288, width: 32 },
+    { x: 160, y: 304, width: 48 },
+    { x: 416, y: 304, width: 32 },
+    { x: 336, y: 320, width: 32 },
+    { x: 720, y: 320, width: 80 },
+    { x: 848, y: 320, width: 32 },
+    { x: 944, y: 320, width: 48 },
+    { x: 96, y: 336, width: 32 },
 ]
 
 const level2Coins = [
+    { x: 304, y: 16 },
+    { x: 1376, y: 32 },
+    { x: 1504, y: 32 },
+    { x: 1008, y: 48 },
+    { x: 1040, y: 48 },
+    { x: 544, y: 64 },
+    { x: 1136, y: 64 },
+    { x: 1376, y: 64 },
+    { x: 1216, y: 80 },
+    { x: 112, y: 96 },
+    { x: 336, y: 112 },
+    { x: 1296, y: 112 },
+    { x: 544, y: 128 },
+    { x: 1456, y: 128 },
+    { x: 1568, y: 128 },
+    { x: 1296, y: 144 },
+    { x: 416, y: 160 },
+    { x: 1216, y: 160 },
+    { x: 160, y: 176 },
+    { x: 816, y: 192 },
+    { x: 160, y: 208 },
+    { x: 688, y: 208 },
+    { x: 272, y: 240 },
+    { x: 256, y: 256 },
+    { x: 816, y: 256 },
+    { x: 160, y: 272 },
+    { x: 800, y: 272 },
+    { x: 832, y: 272 },
+    { x: 960, y: 272 },
+    { x: 336, y: 288 },
+    { x: 736, y: 288 },
+    { x: 112, y: 304 },
+    { x: 512, y: 320 },
+    { x: 560, y: 320 },
+    { x: 608, y: 320 },
 ]
 
 const level2Enemies = [
+    { x: 416, y: 48 },
+    { x: 704, y: 64 },
+    { x: 1024, y: 64 },
+    { x: 1376, y: 112 },
+    { x: 240, y: 128 },
+    { x: 1136, y: 144 },
+    { x: 48, y: 192 },
+    { x: 1200, y: 192 },
+    { x: 1472, y: 192 },
+    { x: 448, y: 224 },
+    { x: 1296, y: 224 },
+    { x: 688, y: 240 },
+    { x: 752, y: 304 },
+    { x: 528, y: 336 },
+    { x: 592, y: 336 },
+    { x: 1088, y: 336 },
 ]
 
 function addBlocks(list, pieces, height = 16) {
@@ -1123,3 +1247,256 @@ Level.prototype.setupLevel = function(levelNo) {
     this.numCoins = coins.length
 }
 
+const GameOverSheet = new Sprite({
+   position: {
+    x:canvas.width/2 - 180,
+    y:canvas.height/2 - 70
+   },
+   scale: 4,
+   numFrames: 12,
+   animationSpeed: 10,
+   imageSrc: './img/GameOver-Sheet.png'
+})
+const VictorySheet = new Sprite({
+    position: {
+     x:canvas.width/2 - 140,
+     y:canvas.height/2 - 80
+    },
+    scale: 4,
+    numFrames: 13,
+    animationSpeed: 4,
+    imageSrc: './img/Victory.png'
+ })
+const currentLevel = new Level({
+    position: {
+        x: 0,
+        y: 0
+    },
+    imgSrc: './img/map1.png'
+})
+currentLevel.setupLevel(1);
+level=1;
+const player = new Player({
+    position: {
+        x: 20,
+        y: currentLevel.playerStartingYPos
+    },
+    imgSrc: './img/Player/Idle_Right.png',
+    scale: 1.5,
+    numFrames: 2,
+    sprites: {
+        idleLeft: {
+            spriteSrc: './img/Player/Idle_Left.png',
+            numFrames: 2
+        },
+        idleRight: {
+            spriteSrc: './img/Player/Idle_Right.png',
+            numFrames: 2
+        },
+        runLeft: {
+            spriteSrc: './img/Player/Run_Left.png',
+            numFrames: 4
+        },
+        runRight: {
+            spriteSrc: './img/Player/Run_Right.png',
+            numFrames: 4
+        },
+        hurtLeft: {
+            spriteSrc: './img/Player/Hurt_Left.png',
+            numFrames:2
+        },
+        hurtRight: {
+            spriteSrc: './img/Player/Hurt_Right.png',
+            numFrames: 2
+        },
+        death: {
+            spriteSrc: './img/Player/Death.png',
+            numFrames: 9
+        }
+    }
+})
+const scoreInfo = document.getElementById('scoreInfo')
+const pauseBtnImg = document.getElementById('pauseBtnImg')
+const translateValues = {
+    position: {
+        x: 0,
+        y: currentLevel.yTranslateBg
+    }
+}
+const overlay = {
+    opacity: 0,
+    target: 0
+}
+let gameOverPlayed = false
+function restart() {
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    if(currentLevel.paused)
+        pause();
+    currentLevel.setupLevel(level);
+    player.position.y = currentLevel.playerStartingYPos;
+    player.position.x  = 20;
+    translateValues.position.y = currentLevel.yTranslateBg;
+    translateValues.position.x = 0;
+    player.resurrect();
+    setCoinBar(0)
+    gameOverPlayed = false
+}
+function pause() {
+    if (!currentLevel.paused) {
+        currentLevel.paused = true;
+        pauseBtnImg.src = './img/play.png';
+    } else {
+        currentLevel.paused = false;
+        scoreInfo.style.display = 'none';
+        pauseBtnImg.src = './img/pause.png';
+        applyOverlay(0, 'black');
+    }
+}
+function applyOverlay(alpha, color) {
+    canvasContext.save()
+    canvasContext.globalAlpha = overlay.opacity
+    canvasContext.fillStyle = color
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+    canvasContext.restore()
+    overlay.target = alpha
+}
+window.addEventListener('keydown', (event) => {
+    switch (event.key) {
+        case 'w':
+        case 'W':
+        case 'ArrowUp':
+            event.preventDefault()
+            if (player.isGrounded) {
+                player.velocity.y = JUMP_FORCE
+                player.isGrounded = false;
+            }
+            KEYS.w.pressed = true
+            player.lastKey = 'w'
+            break
+        case 'd':
+        case 'D':
+        case 'ArrowRight':
+            event.preventDefault()
+            player.lastKey = 'd'
+            KEYS.d.pressed = true
+            break
+        case 'a':
+        case 'A':
+        case 'ArrowLeft':
+            event.preventDefault()
+            player.lastKey = 'a'
+            KEYS.a.pressed = true
+            break
+        case ' ':
+            break
+    }
+})
+function updatePlayerMovement() {
+    if (KEYS.a.pressed && player.lastKey == 'a') {
+        player.velocity.x = -MOVEMENT_SPEED
+        player.setSprite('runLeft')
+        player.direction = 'left'
+    } else if (KEYS.d.pressed && player.lastKey == 'd') {
+        player.velocity.x = MOVEMENT_SPEED
+        player.setSprite('runRight')
+        player.direction = 'right'
+    } else {
+        player.velocity.x = 0
+        if (player.direction === 'left') {
+            player.setSprite('idleLeft')
+        } else {
+            player.setSprite('idleRight')
+        }
+    }
+}
+function animate() {
+    window.requestAnimationFrame(animate)
+    overlay.opacity += (overlay.target - overlay.opacity) * 0.08
+    canvasContext.fillStyle = 'white'
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+    canvasContext.save();
+    canvasContext.scale(BACKGROUND_SCALE, BACKGROUND_SCALE);
+    canvasContext.translate(translateValues.position.x, translateValues.position.y)
+    if(!currentLevel.paused) {
+        currentLevel.update();
+        player.update();
+    } else {
+        currentLevel.pausedDraw();
+        player.draw();
+    }
+    canvasContext.restore();
+    player.hearts.forEach(heart => {
+        heart.draw();
+    })
+    if(currentLevel.paused) {
+        applyOverlay(0.8, 'black')
+        player.hearts.forEach(heart => {
+            heart.draw();
+        })
+        scoreInfo.style.display = 'flex';
+        scoreInfo.innerHTML = 'Game Paused';
+        return;
+    }
+    if(!currentLevel.loaded ) {
+        canvasContext.fillStyle = 'rgba(124,148,161,255)'
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        VictorySheet.update();
+    }
+    if (player.coinsCollected === currentLevel.numCoins) {
+        currentLevel.loaded = false;
+        player.coinsCollected =0;
+        if(!currentLevel.loaded ) {
+            setTimeout(() => {
+                canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+                currentLevel.setupLevel(++level);
+                player.position.y = currentLevel.playerStartingYPos;
+                player.position.x = 20;
+                translateValues.position.y = currentLevel.yTranslateBg;
+                translateValues.position.x = 0;
+                currentLevel.loaded = true;
+                setCoinBar(0)
+            }, 3000)
+        }
+        playVictory();
+    }
+    if(!player.isAlive) {
+        canvasContext.fillStyle = 'rgba(78,60,92,255)'
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        GameOverSheet.update();
+        if (!gameOverPlayed) {
+            playGameOver()
+            gameOverPlayed = true
+        }
+    }
+    if (player.velocity.y < 0) {
+        player.panCameraDown();
+    } else if (player.velocity.y > 0) {
+        player.panCameraUp()
+    }
+    if (player.velocity.x < 0) {
+        player.panCameraRight();
+    } else if (player.velocity.x > 0) {
+        player.panCameraLeft();
+    }
+    updatePlayerMovement()
+}
+animate()
+window.addEventListener('keyup', (event) => {
+    switch (event.key) {
+        case 'w':
+        case 'W':
+        case 'ArrowUp':
+            KEYS.w.pressed = false
+            break
+        case 'd':
+        case 'D':
+        case 'ArrowRight':
+            KEYS.d.pressed = false
+            break
+        case 'a':
+        case 'A':
+        case 'ArrowLeft':
+            KEYS.a.pressed = false
+            break
+    }
+})
