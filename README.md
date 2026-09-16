@@ -27,6 +27,18 @@ I also added different game sounds and the main enemy system.
 **Hours:** 4 hr 7 min  
 **Contribution:** 31.6%
 
+
+### Viraj
+
+I worked on the starting part of the game and built most of the basic systems.
+I set up the main game screen, canvas and controls, and worked on sprite animations and collisions.
+I also added the coin and health systems, created the basic player setup and added the camera movement.
+
+**Slack ID:** U08234X6Y1K  
+**Hours:** 5 hr 15 min  
+**Contribution:** 40.3%
+
+
 ## Features
 
 * there are some levels to play
