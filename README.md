@@ -38,6 +38,16 @@ I also added the coin and health systems, created the basic player setup and add
 **Hours:** 5 hr 15 min  
 **Contribution:** 40.3%
 
+### Gram
+
+I mainly worked on the levels and map system of the game. 
+I added different enemy animation states and created the level system for handling multiple maps. 
+I also worked on loading platforms, collision blocks, coins and enemies from the map data, and added the collision and platform layout used in the first level.
+
+**Slack ID:** U09EED1L2AH  
+**Hours:** 3 hr 40 min  
+**Contribution:** 28.1%
+
 
 ## Features
 
