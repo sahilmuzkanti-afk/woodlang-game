@@ -557,20 +557,20 @@ Player.prototype.checkForSlimesCollissions = function() {
                 currentLevel.slimesArray[i].direction = 'left'
                 currentLevel.slimesArray[i].setSprite("attackLeft")
             } else if (onRightOfSlime({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
-                currentLevel.slimesArray[i].velocity.x = MOVEMENT_SPEED;
-                currentLevel.slimesArray[i].direction = 'right';
-                currentLevel.slimesArray[i].setSprite("attackRight");
+                currentLevel.slimesArray[i].velocity.x = MOVEMENT_SPEED
+                currentLevel.slimesArray[i].direction = 'right'
+                currentLevel.slimesArray[i].setSprite("attackRight")
             }
         } else {
             switch (currentSlime.direction) {
                 case 'left':
-                    currentLevel.slimesArray[i].setSprite("idleLeft");
+                    currentLevel.slimesArray[i].setSprite("idleLeft")
                     break;
                 case 'right':
-                    currentLevel.slimesArray[i].setSprite("idleRight");
+                    currentLevel.slimesArray[i].setSprite("idleRight")
                     break;
             }
-            currentLevel.slimesArray[i].velocity.x = 0;
+            currentLevel.slimesArray[i].velocity.x = 0
         }
     }
     for (let i = 0; i < currentLevel.platformBlocksArray.length; i++) {
@@ -588,14 +588,14 @@ Player.prototype.checkForSlimesCollissions = function() {
 }
 function inSlimeRange({ player, slime }) {
     if (player.position.y + ENEMY_VERTICAL_RANGE >= slime.position.y && player.position.y - ENEMY_VERTICAL_RANGE <= slime.position.y) {
-        if(onRightOfSlime({player, slime})) {
-            if(player.position.x < slime.position.x + slime.width*3) {
+        if (onRightOfSlime({player, slime})) {
+            if (player.position.x < slime.position.x + slime.width*3) {
                 return true;
             } else {
                 return false;
             }
-        } else if(onLeftOfSlime({player,slime})) {
-            if(player.position.x > slime.position.x - slime.width*2) {
+        } else if (onLeftOfSlime({player, slime})) {
+            if (player.position.x > slime.position.x - slime.width*2) {
                 return true;
             } else {
                 return false;
@@ -608,16 +608,16 @@ function inSlimeRange({ player, slime }) {
     }
 }
 class Enemy extends Sprite {
-    constructor({position, imgSrc, scale=1, numFrames = 1, sprites, animationSpeed = ANIMATION_SPEED}) {
+    constructor({position, imgSrc, scale = 1, numFrames = 1, sprites, animationSpeed = ANIMATION_SPEED}) {
         super( {position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed})
         this.velocity = {
             x: 0,
             y: 0
         },
-        this.sprites=sprites,
+        this.sprites = sprites,
         this.direction = randomizeDirection(),
         this.isAlive = true,
-        this.hurtSound=  new Audio('./audio/splat.mp3')
+        this.hurtSound = new Audio('./audio/splat.mp3')
         for (const key in this.sprites) {
             this.sprites[key].image = new Image()
             this.sprites[key].image.src = this.sprites[key].spriteSrc

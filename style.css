@@ -112,3 +112,47 @@ display: block;
 #sidediv {
 min-width: 72px;
 }
+
+canvas {
+max-width: min(100vw - 130px, 1024px);
+height: auto;
+image-rendering: pixelated;
+}
+@media (max-width: 900px) {
+body {
+margin: 0;
+padding: 8px;
+}
+#outermost {
+width: 100%;
+}
+#game {
+justify-content: center;
+}
+canvas {
+max-width: calc(100vw - 94px);
+}
+.btnImg {
+width: 48px;
+height: 48px;
+}
+#scoreInfo {
+font-size: 30px;
+}
+}
+@media (max-width: 520px) {
+#topBar {
+gap: 6px;
+}
+#statsPanel {
+min-width: 150px;
+gap: 8px;
+}
+canvas {
+max-width: calc(100vw - 78px);
+}
+.btnImg {
+width: 40px;
+height: 40px;
+}
+}
