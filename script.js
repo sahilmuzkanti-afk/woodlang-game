@@ -480,15 +480,30 @@ function randomizeDirection() {
         return 'left'
     }
 }
+function playSimpleSound(src) {
+    if (gameState.muted) {
+        return
+    }
+    const sound = new Audio(src)
+    sound.play()
+    sound.onended = function() {
+        this.currentSrc = null
+        this.src = ''
+        this.srcObject = null
+        this.remove()
+    }
+}
+function setMuted(value) {
+    gameState.muted = value
+        if (muteBtnImg) {
+        muteBtnImg.src = gameState.muted ? './img/mute.png' : './img/volume.png'
+    }
+}
+function toggleMute() {
+    setMuted(!gameState.muted)
+}
 function playGetCoin() {
-    var getCoin = new Audio('./audio/oot_rupee_get.mp3')
-    getCoin.play();
-    getCoin.onended = function(){
-        this.currentSrc = null;
-        this.src = "";
-        this.srcObject = null;
-        this.remove();
-    };
+    playSimpleSound('./audio/oot_rupee_get.mp3')
 }
 function onLeftOfSlime({ player, slime }) {
     if (player.position.x < slime.position.x)
@@ -503,7 +518,7 @@ Player.prototype.checkForSlimesCollissions = function() {
             if (this.velocity.y > 0 && !this.isGrounded && currentSlime.isAlive && (this.position.y + this.height < currentSlime.position.y + currentSlime.height - 10)) {
                currentLevel.slimesArray[i].setSprite("death")
                currentLevel.slimesArray[i].velocity.x = 0
-               currentLevel.slimesArray[i].hurtSound.play();
+               playSimpleSound('./audio/splat.mp3')
             }
             else {
                 switch (currentSlime.direction) {
@@ -519,7 +534,7 @@ Player.prototype.checkForSlimesCollissions = function() {
                         if (this.hearts[i].filled !== 0) {
                             this.hearts[i].hurt();
                             this.hurting = true;
-                            this.hurtSound.play();
+                            playSimpleSound('./audio/zelda_hit.mp3')
                             setTimeout(() => {
                                 this.hurting = false;
                             }, 500)
@@ -539,8 +554,8 @@ Player.prototype.checkForSlimesCollissions = function() {
         } else if (inSlimeRange({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
             if (onLeftOfSlime({ player: this, slime: currentSlime })) {
                 currentLevel.slimesArray[i].velocity.x = -MOVEMENT_SPEED
-                currentLevel.slimesArray[i].direction = 'left';
-                currentLevel.slimesArray[i].setSprite("attackLeft");
+                currentLevel.slimesArray[i].direction = 'left'
+                currentLevel.slimesArray[i].setSprite("attackLeft")
             } else if (onRightOfSlime({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
                 currentLevel.slimesArray[i].velocity.x = MOVEMENT_SPEED;
                 currentLevel.slimesArray[i].direction = 'right';
@@ -658,14 +673,7 @@ function createSlime(xpos, ypos) {
     return slime;
 }
 function playGameOver() {
-    var gameOverSound = new Audio('./audio/zelda_secret_sound.mp3')
-    gameOverSound.play();
-    gameOverSound.onended = function(){
-        this.currentSrc = null;
-        this.src = "";
-        this.srcObject = null;
-        this.remove();
-    };
+    playSimpleSound('./audio/zelda_secret_sound.mp3')
 }
 function onRightOfSlime({ player, slime }) {
     if (player.position.x > slime.position.x + slime.width)
@@ -674,14 +682,7 @@ function onRightOfSlime({ player, slime }) {
         return false;
 }
 function playVictory() {
-    var victorySound = new Audio('./audio/rupee-collect.mp3')
-    victorySound.play();
-    victorySound.onended = function(){
-        this.currentSrc = null;
-        this.src = "";
-        this.srcObject = null;
-        this.remove();
-    };
+    playSimpleSound('./audio/rupee-collect.mp3')
 }
 Enemy.prototype.setSprite = function(sprite) {
     if (this.image == this.sprites.death.image) {
@@ -1407,6 +1408,7 @@ function pause() {
 const ui = {
     refreshBtn: document.getElementById('refreshBtn'),
     pauseBtn: document.getElementById('pauseBtn'),
+    muteBtn: document.getElementById('muteBtn'),
     pauseBtnImg: document.getElementById('pauseBtnImg'),
     scoreInfo: document.getElementById('scoreInfo')
 }
@@ -1422,6 +1424,7 @@ function setPauseIcon(paused) {
 }
 ui.refreshBtn.addEventListener('click', restart)
 ui.pauseBtn.addEventListener('click', pause)
+ui.muteBtn.addEventListener('click', toggleMute)
 function applyOverlay(alpha, color) {
     canvasContext.save()
     canvasContext.globalAlpha = overlay.opacity

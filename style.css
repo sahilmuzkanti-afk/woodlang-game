@@ -102,3 +102,13 @@ gap: 8px;
 font-size: 13px;
 }
 }
+
+#muteBtn {
+background-color: #b0a162;
+}
+#muteBtn img {
+display: block;
+}
+#sidediv {
+min-width: 72px;
+}
