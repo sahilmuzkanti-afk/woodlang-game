@@ -191,3 +191,21 @@ color: #fff3a3;
 min-width: 150px;
 text-align: center;
 }
+
+#checkpointText {
+color: #d8ead8;
+}
+#statsPanel {
+min-width: 265px;
+}
+#checkpointBanner {
+color: #d8ead8;
+height: 20px;
+margin-top: 6px;
+opacity: 0;
+text-align: center;
+transition: opacity .2s ease;
+}
+#checkpointBanner.show {
+opacity: 1;
+}

@@ -408,6 +408,7 @@ Player.prototype.checkForCoinCollection = function() {
             this.coinsCollected++
         setCoinBar((this.coinsCollected / currentLevel.numCoins) * 100)
             updateStatsPanel()
+            updateCheckpointFromCoins()
         }
     }
 }
@@ -1361,6 +1362,7 @@ const gameState = {
     score: 0,
     combo: 0,
     comboUntil: 0,
+    transitionTimer: null,
     checkpoint: {
         x: 20,
         y: currentLevel.playerStartingYPos
@@ -1377,28 +1379,88 @@ function resetRunState() {
     gameState.comboUntil = 0
 }
 function resetLevelState() {
-    gameState.checkpoint.x = 20
-    gameState.checkpoint.y = currentLevel.playerStartingYPos
+    setCheckpoint(20, currentLevel.playerStartingYPos)
+}
+function setCheckpoint(x, y) {
+    gameState.checkpoint.x = x
+    gameState.checkpoint.y = y
+    const checkpointText = document.getElementById('checkpointText')
+    if (checkpointText) {
+        checkpointText.innerHTML = x === 20 ? 'Start' : 'Checkpoint'
+    }
+}
+function showCheckpointBanner() {
+    const banner = document.getElementById('checkpointBanner')
+    if (!banner) {
+        return
+    }
+    banner.innerHTML = 'Checkpoint saved'
+    banner.classList.add('show')
+    setTimeout(() => banner.classList.remove('show'), 900)
+}
+function updateCheckpointFromCoins() {
+    if (player.coinsCollected === 0 || currentLevel.numCoins === 0) {
+        return
+    }
+    const checkpointEvery = Math.max(1, Math.ceil(currentLevel.numCoins / 3))
+    if (player.coinsCollected % checkpointEvery !== 0) {
+        return
+    }
+    setCheckpoint(player.position.x, player.position.y)
+    showCheckpointBanner()
+}
+function cancelLevelChange() {
+    if (gameState.transitionTimer !== null) {
+        clearTimeout(gameState.transitionTimer)
+        gameState.transitionTimer = null
+    }
+    gameState.levelChanging = false
+}
+function resetPlayerState() {
+    player.position.x = gameState.checkpoint.x
+    player.position.y = gameState.checkpoint.y
+    player.velocity.x = 0
+    player.velocity.y = 0
+    player.lastKey = undefined
+    player.isGrounded = false
+    player.hurting = false
+    player.hurtUntil = 0
+    player.jumpPressedAt = 0
+    player.resurrect()
+    player.updateBoxes()
+}
+function resetViewState() {
+    translateValues.position.x = 0
+    translateValues.position.y = currentLevel.yTranslateBg
+    overlay.opacity = 0
+    overlay.target = 0
+    canvasContext.setTransform(1, 0, 0, 1, 0, 0)
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height)
 }
 function canPlay() {
     return !currentLevel.paused && !gameState.finalVictory && !gameState.levelChanging
 }
 let gameOverPlayed = false
 function restart() {
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-    if(currentLevel.paused)
-        pause();
-    currentLevel.setupLevel(level);
-    setLevelBadge();
-    resetLevelState();
-    player.position.y = gameState.checkpoint.y;
-    player.position.x = gameState.checkpoint.x;
-    translateValues.position.y = currentLevel.yTranslateBg;
-    translateValues.position.x = 0;
-    player.resurrect();
+    cancelLevelChange()
+    clearMovementKeys()
+    currentLevel.paused = false
+    currentLevel.loaded = true
+    gameState.finalVictory = false
+    currentLevel.setupLevel(level)
+    resetLevelState()
+    resetPlayerState()
+    resetViewState()
+    setLevelBadge()
+    setPauseIcon(false)
+    hideCenterText()
     setCoinBar(0)
+    if (typeof coinParticles !== 'undefined') {
+        coinParticles.length = 0
+    }
     gameOverPlayed = false
     resetRunState()
+    updateStatsPanel()
 }
 function pause() {
     if (!currentLevel.paused) {
@@ -1595,6 +1657,7 @@ function updatePlayerMovement() {
 }
 function animate() {
     window.requestAnimationFrame(animate)
+    canvasContext.setTransform(1, 0, 0, 1, 0, 0)
     overlay.opacity += (overlay.target - overlay.opacity) * 0.08
     canvasContext.fillStyle = 'white'
     canvasContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -1630,8 +1693,9 @@ function animate() {
         currentLevel.loaded = false;
         player.coinsCollected =0;
         if(!currentLevel.loaded ) {
-            setTimeout(() => {
-                canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+            gameState.transitionTimer = setTimeout(() => {
+                canvasContext.setTransform(1, 0, 0, 1, 0, 0)
+                canvasContext.clearRect(0, 0, canvas.width, canvas.height)
                 currentLevel.setupLevel(++level);
                 setLevelBadge();
                 player.position.y = currentLevel.playerStartingYPos;
