@@ -28,3 +28,19 @@ button { border-radius: 40px; transition: transform .7s ease-in-out; }
 button:hover { transform: rotate(360deg); background-color: #d3e6ec; }
 .btnImg { width: 60px; height: 60px; }
 .btnContainer { padding-bottom: 15px; }
+
+button {
+border: 1px solid rgba(255, 255, 255, .35);
+cursor: pointer;
+}
+button:active {
+transform: scale(.96);
+}
+button:focus-visible {
+outline: 2px solid white;
+outline-offset: 3px;
+}
+#scoreInfo {
+z-index: 2;
+text-align: center;
+}

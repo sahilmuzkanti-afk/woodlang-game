@@ -1,17 +1,17 @@
-const canvas = document.querySelector('canvas');
-const canvasContext = canvas.getContext('2d');
+const canvas = document.querySelector('canvas')
+const canvasContext = canvas.getContext('2d')
 const GAME_WIDTH = 64 * 16
 canvas.width = GAME_WIDTH
 const GAME_HEIGHT = 64 * 9
 canvas.height = GAME_HEIGHT
-let level = 1;
-const GRAVITY = 0.11;
-const JUMP_FORCE = -4;
-const MOVEMENT_SPEED = 1;
-const BACKGROUND_SCALE = 2.4;
-const ANIMATION_SPEED = 25;
-const TILE_DIM = 16;
-const ENEMY_VERTICAL_RANGE = 30;
+let level = 1
+const GRAVITY = 0.11
+const JUMP_FORCE = -4
+const MOVEMENT_SPEED = 1
+const BACKGROUND_SCALE = 2.4
+const ANIMATION_SPEED = 25
+const TILE_DIM = 16
+const ENEMY_VERTICAL_RANGE = 30
 const KEYS = {
     a: {
         pressed: false
@@ -28,9 +28,9 @@ const scaledCanvas = {
     height: canvas.height / BACKGROUND_SCALE
 }
 class Sprite {
-    constructor({position, imageSrc, scale=1, numFrames=1, animationSpeed = ANIMATION_SPEED}) {
+    constructor({position, imageSrc, scale = 1, numFrames = 1, animationSpeed = ANIMATION_SPEED}) {
         this.position = position;
-        this.image=new Image();
+        this.image = new Image()
         this.image.src = imageSrc
         this.loaded=false
         this.scale=scale
@@ -1344,14 +1344,32 @@ function restart() {
 function pause() {
     if (!currentLevel.paused) {
         currentLevel.paused = true;
-        pauseBtnImg.src = './img/play.png';
+        setPauseIcon(true);
     } else {
         currentLevel.paused = false;
-        scoreInfo.style.display = 'none';
-        pauseBtnImg.src = './img/pause.png';
+        hideCenterText();
+        setPauseIcon(false);
         applyOverlay(0, 'black');
     }
 }
+const ui = {
+    refreshBtn: document.getElementById('refreshBtn'),
+    pauseBtn: document.getElementById('pauseBtn'),
+    pauseBtnImg: document.getElementById('pauseBtnImg'),
+    scoreInfo: document.getElementById('scoreInfo')
+}
+function showCenterText(text) {
+    ui.scoreInfo.style.display = 'flex'
+    ui.scoreInfo.innerHTML = text
+}
+function hideCenterText() {
+    ui.scoreInfo.style.display = 'none'
+}
+function setPauseIcon(paused) {
+    ui.pauseBtnImg.src = paused ? './img/play.png' : './img/pause.png'
+}
+ui.refreshBtn.addEventListener('click', restart)
+ui.pauseBtn.addEventListener('click', pause)
 function applyOverlay(alpha, color) {
     canvasContext.save()
     canvasContext.globalAlpha = overlay.opacity
@@ -1433,8 +1451,7 @@ function animate() {
         player.hearts.forEach(heart => {
             heart.draw();
         })
-        scoreInfo.style.display = 'flex';
-        scoreInfo.innerHTML = 'Game Paused';
+        showCenterText('Game Paused');
         return;
     }
     if(!currentLevel.loaded ) {
