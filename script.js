@@ -29,7 +29,7 @@ const scaledCanvas = {
 }
 class Sprite {
     constructor({position, imageSrc, scale = 1, numFrames = 1, animationSpeed = ANIMATION_SPEED}) {
-        this.position = position;
+        this.position = position
         this.image = new Image()
         this.image.src = imageSrc
         this.loaded = false
@@ -47,7 +47,7 @@ class Sprite {
 }
 Sprite.prototype.draw = function() {
     if (!this.loaded)
-        return;
+        return
     else {
         canvasContext.drawImage(
             this.image,
@@ -163,21 +163,21 @@ class Coin extends Sprite {
     }
     update() {
         if (! this.isCollected) {
-            this.draw();
-            this.animate();
+            this.draw()
+            this.animate()
         }
     }
 }
 class Heart extends Sprite {
-    constructor({position, imgSrc = './img/heart/heart_sheet.png', scale=2.5, numFrames = 5}) {
+    constructor({position, imgSrc = './img/heart/heart_sheet.png', scale = 2.5, numFrames = 5}) {
         super( {position: position, imageSrc: imgSrc , scale, numFrames})
         this.filled = 1.0,
         this.borderImg = new Image()
-        this.borderImg.src= './img/heart/border.png'
+        this.borderImg.src = './img/heart/border.png'
     }
 }
 Heart.prototype.hurt = function() {
-    if(this.filled === 0) {
+    if (this.filled === 0) {
         return
     } else {
         this.currentFrame++
@@ -185,11 +185,11 @@ Heart.prototype.hurt = function() {
    }
 }
 Heart.prototype.heal = function() {
-    if(this.filled === 1 ) {
+    if (this.filled === 1 ) {
         return;
     } else {
-        this.currentFrame --;
-        this.filled += 0.25;
+        this.currentFrame--
+        this.filled += 0.25
     }
 }
 Heart.prototype.draw = function() {
@@ -314,7 +314,7 @@ Player.prototype.updateBoxes = function() {
 }
 Player.prototype.update = function() {
     this.updateBoxes()
-    this.sides.bottom = this.position.y + this.height;
+    this.sides.bottom = this.position.y + this.height
     this.draw();
     if (this.isAlive)
         this.animate();
@@ -324,21 +324,21 @@ Player.prototype.update = function() {
     }
     if (this.position.x + this.width + this.velocity.x >= currentLevel.mapWidth * TILE_DIM ||
         this.position.x + this.velocity.x <= 0) {
-        this.velocity.x = 0;
+        this.velocity.x = 0
     }
     if (this.position.y + this.height + this.velocity.y >= currentLevel.mapHeight * TILE_DIM) {
         this.velocity.y = 0;
     }
     this.position.x += this.velocity.x
     if (this.velocity.y > 0) {
-        this.isGrounded = false;
+        this.isGrounded = false
     }
-    this.life = 0;
+    this.life = 0
     this.hearts.forEach(heart => {
-        this.life += heart.filled;
+        this.life += heart.filled
     })
     if (this.life === 0 || (this.position.y + this.height) > currentLevel.waterLevel) {
-        this.setSprite('death');
+        this.setSprite('death')
     }
     this.updateBoxes()
     checkForHorizontalCollissions(this);
@@ -1429,6 +1429,19 @@ function applyOverlay(alpha, color) {
     canvasContext.fillRect(0, 0, canvas.width, canvas.height);
     canvasContext.restore()
     overlay.target = alpha
+}
+function isMoveKey(key) {
+    return key === 'a' || key === 'A' || key === 'ArrowLeft' ||
+        key === 'd' || key === 'D' || key === 'ArrowRight'
+}
+function isJumpKey(key) {
+    return key === 'w' || key === 'W' || key === 'ArrowUp'
+}
+function isPauseKey(key) {
+    return key === 'p' || key === 'P'
+}
+function isRestartKey(key) {
+    return key === 'r' || key === 'R'
 }
 window.addEventListener('keydown', (event) => {
     switch (event.key) {

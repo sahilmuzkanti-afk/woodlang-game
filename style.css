@@ -83,3 +83,22 @@ font-size: 15px;
 .coinBarContainer {
 flex: 1 1 420px;
 }
+
+#helpPanel {
+color: antiquewhite;
+display: flex;
+justify-content: center;
+gap: 18px;
+margin-top: 10px;
+font-size: 15px;
+flex-wrap: wrap;
+}
+#helpPanel span {
+white-space: nowrap;
+}
+@media (max-width: 760px) {
+#helpPanel {
+gap: 8px;
+font-size: 13px;
+}
+}
