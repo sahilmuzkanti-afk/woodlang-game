@@ -146,8 +146,8 @@ function checkForVerticalCollissions(object) {
         const currentPlatform = currentLevel.platformBlocksArray[i]
         if ( platformCollission({ obj1: object, obj2: currentPlatform}) ) {
             if (object.velocity.y > 0) {
-                object.velocity.y = 0;
-                object.isGrounded=true;
+                object.velocity.y = 0
+                object.isGrounded=true
                 const offset = object.position.y - object.position.y + object.height
                 object.position.y = currentPlatform.position.y -offset -0.02
                 break
@@ -186,7 +186,7 @@ Heart.prototype.hurt = function() {
 }
 Heart.prototype.heal = function() {
     if (this.filled === 1 ) {
-        return;
+        return
     } else {
         this.currentFrame--
         this.filled += 0.25
@@ -194,7 +194,7 @@ Heart.prototype.heal = function() {
 }
 Heart.prototype.draw = function() {
     if (!this.loaded )
-        return;
+        return
     else {
         canvasContext.drawImage(
             this.borderImg,
@@ -286,7 +286,7 @@ Player.prototype.panCameraLeft = function() {
 }
 Player.prototype.panCameraRight = function() {
     if (this.cameraBox.position.x <= 0) {
-        return;
+        return
     }
     while (this.cameraBox.position.x <= Math.abs(translateValues.position.x)) {
         translateValues.position.x -= this.velocity.x;
@@ -353,6 +353,7 @@ Player.prototype.update = function() {
 Player.prototype.applyGravity = function() {
     this.position.y += this.velocity.y
     this.velocity.y += GRAVITY
+    limitFallSpeed()
 }
 Player.prototype.resurrect = function() {
     this.coinsCollected = 0
@@ -799,17 +800,17 @@ Level.prototype.setupLevel = function(levelNo) {
     switch (levelNo) {
         case 1:
             this.image.src = './img/map1.png'
-            this.levelNo = levelNo;
+            this.levelNo = levelNo
             this.mapWidth = 70
             this.mapHeight = 40
             this.waterLevel = 560
             this.playerStartingYPos = 370
             this.yTranslateBg = scaledCanvas.height - (this.mapHeight * TILE_DIM)
-            this.floorCollissions2D.length=0;
+            this.floorCollissions2D.length = 0
             for (let i = 0; i < floorCollissionsMap1.length; i += this.mapWidth) {
                 this.floorCollissions2D.push(floorCollissionsMap1.slice(i, i +this.mapWidth))
             }
-            this.platformCollissions2D.length=0;
+            this.platformCollissions2D.length = 0
             for (let i = 0; i < platformCollissionsMap1.length; i += this.mapWidth) {
                 this.platformCollissions2D.push(platformCollissionsMap1.slice(i, i + this.mapWidth))
             }
@@ -825,17 +826,17 @@ Level.prototype.setupLevel = function(levelNo) {
             break;
             case 2:
                 this.image.src = './img/map2.png'
-                this.levelNo = levelNo;
-                this.mapWidth = 100;
-                this.mapHeight = 25;
-                this.waterLevel = 360;
-                this.playerStartingYPos = 0;
-                this.yTranslateBg = 0;
-                this.floorCollissions2D.length=0;
+                this.levelNo = levelNo
+                this.mapWidth = 100
+                this.mapHeight = 25
+                this.waterLevel = 360
+                this.playerStartingYPos = 0
+                this.yTranslateBg = 0
+                this.floorCollissions2D.length = 0
                 for (let i = 0; i < floorCollissionsMap2.length; i += this.mapWidth) {
                     this.floorCollissions2D.push(floorCollissionsMap2.slice(i, i +this.mapWidth))
                 }
-                this.platformCollissions2D.length=0;
+                this.platformCollissions2D.length = 0
                 for (let i = 0; i < platformCollissionsMap2.length; i += this.mapWidth) {
                     this.platformCollissions2D.push(platformCollissionsMap2.slice(i, i + this.mapWidth))
                 }
@@ -1465,6 +1466,31 @@ function jumpPlayer() {
     }
     player.jumpPressedAt = now
 }
+function updateJumpFeelText() {
+    const jumpFeelText = document.getElementById('jumpFeelText')
+    if (!jumpFeelText) {
+        return
+    }
+    if (!player.isGrounded && player.velocity.y < 0) {
+        jumpFeelText.innerHTML = 'Hold jump to rise'
+        return
+    }
+    if (!player.isGrounded && player.velocity.y >= 0) {
+        jumpFeelText.innerHTML = 'Falling'
+        return
+    }
+    jumpFeelText.innerHTML = 'Tap jump for short hops'
+}
+function stopJumpEarly() {
+    if (player.velocity.y < -1.7) {
+        player.velocity.y = -1.7
+    }
+}
+function limitFallSpeed() {
+    if (player.velocity.y > 6) {
+        player.velocity.y = 6
+    }
+}
 function useBufferedJump() {
     if (!player.jumpPressedAt) {
         return
@@ -1637,15 +1663,20 @@ function animate() {
     } else if (player.velocity.x > 0) {
         player.panCameraLeft();
     }
+    updateJumpFeelText()
     useBufferedJump()
     updatePlayerMovement()
 }
 animate()
+window.addEventListener('pointerup', () => {
+    stopJumpEarly()
+})
 window.addEventListener('keyup', (event) => {
     switch (event.key) {
         case 'w':
         case 'W':
         case 'ArrowUp':
+            stopJumpEarly()
             KEYS.w.pressed = false
             break
         case 'd':
