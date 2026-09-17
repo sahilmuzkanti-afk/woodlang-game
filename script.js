@@ -126,7 +126,7 @@ function checkForHorizontalCollissions(object) {
     }
 }
 function checkForVerticalCollissions(object) {
-    for(let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
+    for (let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
             if(object.velocity.y > 0) {
@@ -341,8 +341,8 @@ Player.prototype.update = function() {
         this.setSprite('death')
     }
     this.updateBoxes()
-    checkForHorizontalCollissions(this);
-    this.applyGravity();
+    checkForHorizontalCollissions(this)
+    this.applyGravity()
     this.updateBoxes()
     this.checkForVerticalCollissions()
     this.checkForSlimesCollissions()
@@ -624,17 +624,17 @@ class Enemy extends Sprite {
         }
     }
 }
-Enemy.prototype.applyGravity  = function() {
+Enemy.prototype.applyGravity = function() {
     this.position.y += this.velocity.y
     this.velocity.y += GRAVITY
 }
 Enemy.prototype.update = function() {
     this.draw();
-    if(this.isAlive) {
+    if (this.isAlive) {
         this.animate();
-        this.position.x += this.velocity.x;
-        checkForHorizontalCollissions(this);
-        this.applyGravity();
+        this.position.x += this.velocity.x
+        checkForHorizontalCollissions(this)
+        this.applyGravity()
         checkForVerticalCollissions(this);
     }
 }
@@ -1503,6 +1503,31 @@ function handleWindowBlur() {
     clearMovementKeys()
 }
 window.addEventListener('blur', handleWindowBlur)
+function setTouchKey(keyName, pressed) {
+    KEYS[keyName].pressed = pressed
+    if (pressed) {
+        player.lastKey = keyName
+    }
+}
+function bindTouchButton(id, keyName) {
+    const button = document.getElementById(id)
+    if (!button) {
+        return
+    }
+    button.addEventListener('pointerdown', event => {
+        event.preventDefault()
+        if (keyName === 'w') {
+            jumpPlayer()
+        }
+        setTouchKey(keyName, true)
+    })
+    button.addEventListener('pointerup', () => setTouchKey(keyName, false))
+    button.addEventListener('pointercancel', () => setTouchKey(keyName, false))
+    button.addEventListener('pointerleave', () => setTouchKey(keyName, false))
+}
+bindTouchButton('touchLeft', 'a')
+bindTouchButton('touchJump', 'w')
+bindTouchButton('touchRight', 'd')
 function updatePlayerMovement() {
     if (KEYS.a.pressed && player.lastKey == 'a') {
         player.velocity.x = -MOVEMENT_SPEED

@@ -156,3 +156,28 @@ width: 40px;
 height: 40px;
 }
 }
+
+#touchControls {
+display: none;
+justify-content: center;
+gap: 12px;
+margin-top: 10px;
+}
+.touchBtn {
+width: 58px;
+height: 48px;
+color: white;
+background-color: #476b4e;
+border: 1px solid #d8ead8;
+border-radius: 8px;
+font-size: 20px;
+}
+.touchBtn:active {
+background-color: #75c9b1;
+color: #10251e;
+}
+@media (max-width: 900px) {
+#touchControls {
+display: flex;
+}
+}
