@@ -63,8 +63,8 @@ Sprite.prototype.draw = function() {
     }
 }
 Sprite.prototype.update = function() {
-    this.draw();
-    this.animate();
+    this.draw()
+    this.animate()
 }
 Sprite.prototype.animate = function() {
     this.elapsedFrames++
@@ -78,14 +78,14 @@ Sprite.prototype.animate = function() {
 }
 class CollissionBlock {
     constructor({position, height = TILE_DIM}) {
-        this.position = position;
+        this.position = position
         this.width = TILE_DIM
         this.height = height
     }
     draw() {
     }
     update() {
-        this.draw();
+        this.draw()
     }
 }
 function detectCollission({ obj1, obj2 }) {
@@ -109,7 +109,7 @@ function platformCollission({ obj1, obj2 }) {
     ) { return true } else { return false }
 }
 function checkForHorizontalCollissions(object) {
-    for(let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
+    for (let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
             if (object.velocity.x > 0) {
@@ -353,14 +353,14 @@ Player.prototype.applyGravity = function() {
     this.velocity.y += GRAVITY
 }
 Player.prototype.resurrect = function() {
-    this.coinsCollected = 0;
-    this.isAlive = true;
+    this.coinsCollected = 0
+    this.isAlive = true
     this.image = this.sprites.idleLeft.image
     this.numFrames = this.sprites.idleLeft.numFrames
     this.currentFrame = 0
     this.hearts.forEach(heart => {
         while (heart.filled !== 1) {
-            heart.heal();
+            heart.heal()
         }
     })
 }
@@ -398,9 +398,9 @@ Player.prototype.checkForCoinCollection = function() {
     for (let i = 0; i < currentLevel.coinsArray.length; i++) {
         const currentCoin = currentLevel.coinsArray[i]
         if (detectCollission({ obj1: this.hitBox, obj2: currentCoin }) && currentCoin.isCollected == false) {
-            currentLevel.coinsArray[i].isCollected = true;
+            currentLevel.coinsArray[i].isCollected = true
             playGetCoin()
-            this.coinsCollected++;
+            this.coinsCollected++
         setCoinBar((this.coinsCollected / currentLevel.numCoins) * 100)
             updateStatsPanel()
         }
@@ -473,11 +473,11 @@ Player.prototype.setSprite = function(sprite) {
     }
 }
 function randomizeDirection() {
-    let rand = Math.round( Math.random() );
-    if(rand%2 === 0 ) {
-        return 'right';
+    let rand = Math.round( Math.random() )
+    if (rand%2 === 0 ) {
+        return 'right'
     } else {
-        return 'left';
+        return 'left'
     }
 }
 function playGetCoin() {
@@ -502,16 +502,16 @@ Player.prototype.checkForSlimesCollissions = function() {
         if (detectCollission({ obj1: this.hitBox, obj2: currentSlime })) {
             if (this.velocity.y > 0 && !this.isGrounded && currentSlime.isAlive && (this.position.y + this.height < currentSlime.position.y + currentSlime.height - 10)) {
                currentLevel.slimesArray[i].setSprite("death")
-               currentLevel.slimesArray[i].velocity.x = 0;
+               currentLevel.slimesArray[i].velocity.x = 0
                currentLevel.slimesArray[i].hurtSound.play();
             }
             else {
                 switch (currentSlime.direction) {
                     case 'left':
-                        currentLevel.slimesArray[i].setSprite("attackLeft");
+                        currentLevel.slimesArray[i].setSprite("attackLeft")
                         break;
                     case 'right':
-                        currentLevel.slimesArray[i].setSprite("attackRight");
+                        currentLevel.slimesArray[i].setSprite("attackRight")
                         break;
                 }
                 if (!this.hurting &&  currentLevel.slimesArray[i].image !=  currentLevel.slimesArray[i].sprites.death.image) {
@@ -538,7 +538,7 @@ Player.prototype.checkForSlimesCollissions = function() {
             }
         } else if (inSlimeRange({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
             if (onLeftOfSlime({ player: this, slime: currentSlime })) {
-                currentLevel.slimesArray[i].velocity.x = -MOVEMENT_SPEED;
+                currentLevel.slimesArray[i].velocity.x = -MOVEMENT_SPEED
                 currentLevel.slimesArray[i].direction = 'left';
                 currentLevel.slimesArray[i].setSprite("attackLeft");
             } else if (onRightOfSlime({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
@@ -1443,16 +1443,23 @@ function isPauseKey(key) {
 function isRestartKey(key) {
     return key === 'r' || key === 'R'
 }
+
+function jumpPlayer() {
+    if (!canPlay()) {
+        return
+    }
+    if (player.isGrounded) {
+        player.velocity.y = JUMP_FORCE
+        player.isGrounded = false
+    }
+}
 window.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'w':
         case 'W':
         case 'ArrowUp':
             event.preventDefault()
-            if (player.isGrounded) {
-                player.velocity.y = JUMP_FORCE
-                player.isGrounded = false;
-            }
+            jumpPlayer()
             KEYS.w.pressed = true
             player.lastKey = 'w'
             break
@@ -1470,10 +1477,29 @@ window.addEventListener('keydown', (event) => {
             player.lastKey = 'a'
             KEYS.a.pressed = true
             break
+        case 'p':
+        case 'P':
+            pause()
+            break
+        case 'r':
+        case 'R':
+            restart()
+            break
         case ' ':
+            event.preventDefault()
+            jumpPlayer()
             break
     }
 })
+function clearMovementKeys() {
+    KEYS.a.pressed = false
+    KEYS.d.pressed = false
+    KEYS.w.pressed = false
+}
+function handleWindowBlur() {
+    clearMovementKeys()
+}
+window.addEventListener('blur', handleWindowBlur)
 function updatePlayerMovement() {
     if (KEYS.a.pressed && player.lastKey == 'a') {
         player.velocity.x = -MOVEMENT_SPEED
