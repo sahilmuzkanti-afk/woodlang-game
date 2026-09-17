@@ -32,15 +32,15 @@ class Sprite {
         this.position = position;
         this.image = new Image()
         this.image.src = imageSrc
-        this.loaded=false
-        this.scale=scale
+        this.loaded = false
+        this.scale = scale
         this.numFrames = numFrames
         this.currentFrame = 0
         this.elapsedFrames = 0
         this.animationSpeed = animationSpeed
         this.image.onload = () => {
             this.loaded = true
-            this.width= ( this.image.width/this.numFrames ) * this.scale
+            this.width = ( this.image.width/this.numFrames ) * this.scale
             this.height = (this.image.height ) * this.scale
         }
     }
@@ -68,19 +68,19 @@ Sprite.prototype.update = function() {
 }
 Sprite.prototype.animate = function() {
     this.elapsedFrames++
-    if(this.elapsedFrames % this.animationSpeed === 0 ) {
-        if(this.currentFrame < (this.numFrames-1)) {
-            this.currentFrame++;
+    if (this.elapsedFrames % this.animationSpeed === 0 ) {
+        if (this.currentFrame < (this.numFrames-1)) {
+            this.currentFrame++
         } else {
-            this.currentFrame = 0;
+            this.currentFrame = 0
         }
     }
 }
 class CollissionBlock {
-    constructor({position, height=TILE_DIM}) {
+    constructor({position, height = TILE_DIM}) {
         this.position = position;
-        this.width= TILE_DIM;
-        this.height=height
+        this.width = TILE_DIM
+        this.height = height
     }
     draw() {
     }
@@ -112,7 +112,7 @@ function checkForHorizontalCollissions(object) {
     for(let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
-            if(object.velocity.x > 0) {
+            if (object.velocity.x > 0) {
                 object.velocity.x = 0;
                 object.position.x = currentBlock.position.x - object.width -0.02
                 break
@@ -1327,19 +1327,52 @@ const overlay = {
     opacity: 0,
     target: 0
 }
+const gameState = {
+    finalVictory: false,
+    levelChanging: false,
+    muted: false,
+    startedAt: Date.now(),
+    elapsedMs: 0,
+    score: 0,
+    combo: 0,
+    comboUntil: 0,
+    checkpoint: {
+        x: 20,
+        y: currentLevel.playerStartingYPos
+    },
+    difficulty: 'normal'
+}
+function resetRunState() {
+    gameState.finalVictory = false
+    gameState.levelChanging = false
+    gameState.startedAt = Date.now()
+    gameState.elapsedMs = 0
+    gameState.score = 0
+    gameState.combo = 0
+    gameState.comboUntil = 0
+}
+function resetLevelState() {
+    gameState.checkpoint.x = 20
+    gameState.checkpoint.y = currentLevel.playerStartingYPos
+}
+function canPlay() {
+    return !currentLevel.paused && !gameState.finalVictory && !gameState.levelChanging
+}
 let gameOverPlayed = false
 function restart() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     if(currentLevel.paused)
         pause();
     currentLevel.setupLevel(level);
-    player.position.y = currentLevel.playerStartingYPos;
-    player.position.x  = 20;
+    resetLevelState();
+    player.position.y = gameState.checkpoint.y;
+    player.position.x = gameState.checkpoint.x;
     translateValues.position.y = currentLevel.yTranslateBg;
     translateValues.position.x = 0;
     player.resurrect();
     setCoinBar(0)
     gameOverPlayed = false
+    resetRunState()
 }
 function pause() {
     if (!currentLevel.paused) {

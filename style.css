@@ -44,3 +44,14 @@ outline-offset: 3px;
 z-index: 2;
 text-align: center;
 }
+
+#mainDiv {
+overflow: hidden;
+}
+#scoreInfo {
+line-height: 1.25;
+padding: 20px;
+}
+canvas {
+display: block;
+}
