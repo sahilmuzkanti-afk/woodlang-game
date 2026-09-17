@@ -181,3 +181,7 @@ color: #10251e;
 display: flex;
 }
 }
+
+#helpPanel span:nth-child(2) {
+color: #fff3a3;
+}

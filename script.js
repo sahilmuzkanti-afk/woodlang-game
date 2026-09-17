@@ -129,9 +129,9 @@ function checkForVerticalCollissions(object) {
     for (let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
-            if(object.velocity.y > 0) {
-                object.velocity.y = 0;
-                object.isGrounded=true;
+            if (object.velocity.y > 0) {
+                object.velocity.y = 0
+                object.isGrounded=true
              object.position.y = currentBlock.position.y -object.height-0.02
                 break
             }
@@ -145,7 +145,7 @@ function checkForVerticalCollissions(object) {
     for (let i = 0; i< currentLevel.platformBlocksArray.length; i++) {
         const currentPlatform = currentLevel.platformBlocksArray[i]
         if ( platformCollission({ obj1: object, obj2: currentPlatform}) ) {
-            if(object.velocity.y > 0) {
+            if (object.velocity.y > 0) {
                 object.velocity.y = 0;
                 object.isGrounded=true;
                 const offset = object.position.y - object.position.y + object.height
@@ -258,7 +258,9 @@ class Player extends Sprite {
         this.hearts = [],
         this.life = 3.00,
         this.hurtSound = new Audio ('./audio/zelda_hit.mp3'),
-        this.hurting = false
+        this.hurting = false,
+        this.lastGroundedAt = Date.now(),
+        this.jumpPressedAt = 0
         for (const key in this.sprites) {
             this.sprites[key].image = new Image()
             this.sprites[key].image.src = this.sprites[key].spriteSrc
@@ -371,6 +373,7 @@ Player.prototype.checkForVerticalCollissions = function() {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
                 this.isGrounded = true;
+                this.lastGroundedAt = Date.now();
                 this.position.y = currentBlock.position.y - this.height - 0.02
                 break
             }
@@ -387,6 +390,7 @@ Player.prototype.checkForVerticalCollissions = function() {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
                 this.isGrounded = true;
+                this.lastGroundedAt = Date.now();
                 const offset = this.hitBox.position.y - this.position.y + this.hitBox.height
                 this.position.y = currentPlatform.position.y - offset - 0.02
                 break
@@ -579,6 +583,7 @@ Player.prototype.checkForSlimesCollissions = function() {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
                 this.isGrounded = true;
+                this.lastGroundedAt = Date.now();
                 const offset = this.hitBox.position.y - this.position.y + this.hitBox.height
                 this.position.y = currentPlatform.position.y - offset - 0.02
                 break
@@ -635,7 +640,7 @@ Enemy.prototype.update = function() {
         this.position.x += this.velocity.x
         checkForHorizontalCollissions(this)
         this.applyGravity()
-        checkForVerticalCollissions(this);
+        checkForVerticalCollissions(this)
     }
 }
 function createSlime(xpos, ypos) {
@@ -670,7 +675,7 @@ function createSlime(xpos, ypos) {
             },
         },
     })
-    return slime;
+    return slime
 }
 function playGameOver() {
     playSimpleSound('./audio/zelda_secret_sound.mp3')
@@ -727,22 +732,22 @@ Enemy.prototype.setSprite = function(sprite) {
             }
             break;
         case 'death':
-            if(this.image!== this.sprites.death.image) {
-                this.image=this.sprites.death.image
+            if (this.image !== this.sprites.death.image) {
+                this.image = this.sprites.death.image
                 this.numFrames = this.sprites.death.numFrames
-                this.currentFrame=0
+                this.currentFrame = 0
             }
             break;
         case 'attackLeft':
-        if(this.image!== this.sprites.attackLeft.image) {
-            this.image=this.sprites.attackLeft.image
+        if (this.image !== this.sprites.attackLeft.image) {
+            this.image = this.sprites.attackLeft.image
             this.numFrames = this.sprites.attackLeft.numFrames
             this.currentFrame=0
         }
         break;
         case 'attackRight':
-        if(this.image!== this.sprites.attackRight.image) {
-            this.image=this.sprites.attackRight.image
+        if (this.image !== this.sprites.attackRight.image) {
+            this.image = this.sprites.attackRight.image
             this.numFrames = this.sprites.attackRight.numFrames
             this.currentFrame=0
         }
@@ -752,8 +757,8 @@ Enemy.prototype.setSprite = function(sprite) {
 class Level extends Sprite {
     constructor({ position, imgSrc, scale = 1, numFrames = 1, animationSpeed = ANIMATION_SPEED }) {
         super({ position: position, imageSrc: imgSrc, scale, numFrames, animationSpeed })
-        this.loaded=true,
-        this.paused=false,
+        this.loaded = true,
+        this.paused = false,
         this.mapWidth = 70,
         this.mapHeight = 40,
         this.numCoins = 0,
@@ -795,11 +800,11 @@ Level.prototype.setupLevel = function(levelNo) {
         case 1:
             this.image.src = './img/map1.png'
             this.levelNo = levelNo;
-            this.mapWidth = 70;
-            this.mapHeight = 40;
-            this.waterLevel = 560;
-            this.playerStartingYPos = 370;
-            this.yTranslateBg = scaledCanvas.height - (this.mapHeight * TILE_DIM);
+            this.mapWidth = 70
+            this.mapHeight = 40
+            this.waterLevel = 560
+            this.playerStartingYPos = 370
+            this.yTranslateBg = scaledCanvas.height - (this.mapHeight * TILE_DIM)
             this.floorCollissions2D.length=0;
             for (let i = 0; i < floorCollissionsMap1.length; i += this.mapWidth) {
                 this.floorCollissions2D.push(floorCollissionsMap1.slice(i, i +this.mapWidth))
@@ -1451,9 +1456,25 @@ function jumpPlayer() {
     if (!canPlay()) {
         return
     }
-    if (player.isGrounded) {
+    const now = Date.now()
+    if (player.isGrounded || now - player.lastGroundedAt < 120) {
         player.velocity.y = JUMP_FORCE
         player.isGrounded = false
+        player.jumpPressedAt = 0
+        return
+    }
+    player.jumpPressedAt = now
+}
+function useBufferedJump() {
+    if (!player.jumpPressedAt) {
+        return
+    }
+    if (Date.now() - player.jumpPressedAt > 140) {
+        player.jumpPressedAt = 0
+        return
+    }
+    if (player.isGrounded) {
+        jumpPlayer()
     }
 }
 window.addEventListener('keydown', (event) => {
@@ -1616,6 +1637,7 @@ function animate() {
     } else if (player.velocity.x > 0) {
         player.panCameraLeft();
     }
+    useBufferedJump()
     updatePlayerMovement()
 }
 animate()
