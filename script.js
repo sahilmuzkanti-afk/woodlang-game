@@ -259,6 +259,7 @@ class Player extends Sprite {
         this.life = 3.00,
         this.hurtSound = new Audio ('./audio/zelda_hit.mp3'),
         this.hurting = false,
+        this.hurtUntil = 0,
         this.lastGroundedAt = Date.now(),
         this.jumpPressedAt = 0
         for (const key in this.sprites) {
@@ -294,7 +295,7 @@ Player.prototype.panCameraRight = function() {
 }
 Player.prototype.panCameraDown = function() {
     if ((this.cameraBox.position.y + this.velocity.y) <= 0) {
-        return;
+        return
     }
     while (this.cameraBox.position.y <= Math.abs(translateValues.position.y)) {
         translateValues.position.y -= this.velocity.y
@@ -302,7 +303,7 @@ Player.prototype.panCameraDown = function() {
 }
 Player.prototype.panCameraUp = function() {
     if ((this.cameraBox.position.y + this.cameraBox.height + this.velocity.y) >= currentLevel.mapHeight * TILE_DIM) {
-        return;
+        return
     }
     while ((this.cameraBox.position.y + this.cameraBox.height) >= (Math.abs(translateValues.position.y) + scaledCanvas.height)) {
         translateValues.position.y -= this.velocity.y
@@ -317,9 +318,11 @@ Player.prototype.updateBoxes = function() {
 Player.prototype.update = function() {
     this.updateBoxes()
     this.sides.bottom = this.position.y + this.height
-    this.draw();
+    if (!(Date.now() < this.hurtUntil && Math.floor(Date.now() / 90) % 2 === 0)) {
+        this.draw()
+    }
     if (this.isAlive)
-        this.animate();
+        this.animate()
     else {
         this.velocity.x = 0
         this.velocity.y = 0
@@ -329,7 +332,7 @@ Player.prototype.update = function() {
         this.velocity.x = 0
     }
     if (this.position.y + this.height + this.velocity.y >= currentLevel.mapHeight * TILE_DIM) {
-        this.velocity.y = 0;
+        this.velocity.y = 0
     }
     this.position.x += this.velocity.x
     if (this.velocity.y > 0) {
@@ -372,7 +375,7 @@ Player.prototype.checkForVerticalCollissions = function() {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if (detectCollission({ obj1: this, obj2: currentBlock })) {
             if (this.velocity.y > 0) {
-                this.velocity.y = 0;
+                this.velocity.y = 0
                 this.isGrounded = true;
                 this.lastGroundedAt = Date.now();
                 this.position.y = currentBlock.position.y - this.height - 0.02
@@ -413,7 +416,7 @@ Player.prototype.checkForCoinCollection = function() {
     }
 }
 Player.prototype.setSprite = function(sprite) {
-    if((this.image == this.sprites.hurtLeft.image  || this.image == this.sprites.hurtRight.image ) && this.hurting) {
+    if ((this.image == this.sprites.hurtLeft.image  || this.image == this.sprites.hurtRight.image ) && Date.now() < this.hurtUntil) {
         return;
     }
     if (this.image == this.sprites.death.image) {
@@ -535,11 +538,13 @@ Player.prototype.checkForSlimesCollissions = function() {
                         currentLevel.slimesArray[i].setSprite("attackRight")
                         break;
                 }
-                if (!this.hurting &&  currentLevel.slimesArray[i].image !=  currentLevel.slimesArray[i].sprites.death.image) {
+                if (Date.now() >= this.hurtUntil && currentLevel.slimesArray[i].image != currentLevel.slimesArray[i].sprites.death.image) {
                     for (let i = 2; i >= 0; i--) {
                         if (this.hearts[i].filled !== 0) {
                             this.hearts[i].hurt();
                             this.hurting = true;
+                            this.hurtUntil = Date.now() + 900;
+                            flashDamage();
                             playSimpleSound('./audio/zelda_hit.mp3')
                             setTimeout(() => {
                                 this.hurting = false;
@@ -815,15 +820,15 @@ Level.prototype.setupLevel = function(levelNo) {
             for (let i = 0; i < platformCollissionsMap1.length; i += this.mapWidth) {
                 this.platformCollissions2D.push(platformCollissionsMap1.slice(i, i + this.mapWidth))
             }
-            this.coins2D.length= 0;
+            this.coins2D.length = 0
             for (let i = 0; i < coinsMap1.length; i += this.mapWidth) {
                 this.coins2D.push(coinsMap1.slice(i, i + this.mapWidth))
             }
-            this.slimes2D.length =0;
+            this.slimes2D.length = 0
             for (let i = 0; i < slimesMap1.length; i += this.mapWidth) {
                 this.slimes2D.push(slimesMap1.slice(i, i + this.mapWidth))
             }
-            this.initArrays();
+            this.initArrays()
             break;
             case 2:
                 this.image.src = './img/map2.png'
@@ -841,15 +846,15 @@ Level.prototype.setupLevel = function(levelNo) {
                 for (let i = 0; i < platformCollissionsMap2.length; i += this.mapWidth) {
                     this.platformCollissions2D.push(platformCollissionsMap2.slice(i, i + this.mapWidth))
                 }
-                this.coins2D.length= 0;
+                this.coins2D.length = 0
                 for (let i = 0; i < coinsMap2.length; i += this.mapWidth) {
                     this.coins2D.push(coinsMap2.slice(i, i + this.mapWidth))
                 }
-                this.slimes2D.length =0;
+                this.slimes2D.length = 0
                 for (let i = 0; i < slimesMap2.length; i += this.mapWidth) {
                     this.slimes2D.push(slimesMap2.slice(i, i + this.mapWidth))
                 }
-                this.initArrays();
+                this.initArrays()
                 break;
     }
 }
@@ -870,17 +875,17 @@ Level.prototype.pausedDraw = function() {
         )
     }
     this.collissionBlocksArray.forEach(collissionBlick => {
-        collissionBlick.draw();
+        collissionBlick.draw()
     })
     this.platformBlocksArray.forEach(platform => {
-        platform.draw();
+        platform.draw()
     })
     this.coinsArray.forEach(coin => {
-        if(!coin.isCollected)
-            coin.draw();
+        if (!coin.isCollected)
+            coin.draw()
     })
     this.slimesArray.forEach(slime => {
-        slime.draw();
+        slime.draw()
     })
 }
 Level.prototype.clearObjects = function() {
@@ -926,7 +931,7 @@ Level.prototype.initArrays = function() {
                         y: y * 16
                     }
                 }))
-                this.numCoins++;
+                this.numCoins++
             }
         })
     })
@@ -942,16 +947,16 @@ Level.prototype.update = function() {
     this.draw();
     this.animate();
     this.collissionBlocksArray.forEach(collissionBlick => {
-        collissionBlick.update();
+        collissionBlick.update()
     })
     this.platformBlocksArray.forEach(platform => {
-        platform.update();
+        platform.update()
     })
     this.coinsArray.forEach(coin => {
-        coin.update();
+        coin.update()
     })
     this.slimesArray.forEach(slime => {
-        slime.update();
+        slime.update()
     })
 }
 const level1Ground = [
@@ -1299,8 +1304,8 @@ const currentLevel = new Level({
     },
     imgSrc: './img/map1.png'
 })
-currentLevel.setupLevel(1);
-level=1;
+currentLevel.setupLevel(1)
+level = 1
 setLevelBadge();
 const player = new Player({
     position: {
@@ -1515,6 +1520,12 @@ function isRestartKey(key) {
     return key === 'r' || key === 'R'
 }
 
+function flashDamage() {
+    document.body.classList.add('hurtFlash')
+    setTimeout(() => {
+        document.body.classList.remove('hurtFlash')
+    }, 250)
+}
 function jumpPlayer() {
     if (!canPlay()) {
         return

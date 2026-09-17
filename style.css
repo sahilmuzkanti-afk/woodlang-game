@@ -209,3 +209,10 @@ transition: opacity .2s ease;
 #checkpointBanner.show {
 opacity: 1;
 }
+
+#healthText {
+min-width: 70px;
+}
+body.hurtFlash {
+background-color: #5a4050;
+}
