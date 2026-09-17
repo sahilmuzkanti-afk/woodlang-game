@@ -55,3 +55,31 @@ padding: 20px;
 canvas {
 display: block;
 }
+
+#topBar {
+gap: 10px;
+align-items: center;
+flex-wrap: wrap;
+}
+#levelBadge {
+color: white;
+min-width: 90px;
+text-align: left;
+white-space: nowrap;
+}
+#statsPanel {
+display: flex;
+gap: 14px;
+color: white;
+min-width: 100%;
+justify-content: flex-end;
+order: 10;
+white-space: nowrap;
+}
+#coinText,
+#healthText {
+font-size: 15px;
+}
+.coinBarContainer {
+flex: 1 1 420px;
+}

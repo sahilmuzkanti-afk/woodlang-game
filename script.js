@@ -113,12 +113,12 @@ function checkForHorizontalCollissions(object) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
             if (object.velocity.x > 0) {
-                object.velocity.x = 0;
+                object.velocity.x = 0
                 object.position.x = currentBlock.position.x - object.width -0.02
                 break
             }
-            if(object.velocity.x<0) {
-                object.velocity.x=0;
+            if (object.velocity.x<0) {
+                object.velocity.x = 0
                 object.position.x = currentBlock.position.x + currentBlock.width + 0.02
                 break
             }
@@ -135,14 +135,14 @@ function checkForVerticalCollissions(object) {
              object.position.y = currentBlock.position.y -object.height-0.02
                 break
             }
-            if(object.velocity.y<0) {
-                object.velocity.y=0;
+            if (object.velocity.y<0) {
+                object.velocity.y = 0
                 object.position.y = currentBlock.position.y  + currentBlock.height + 0.02
                 break
             }
         }
     }
-    for(let i=0; i< currentLevel.platformBlocksArray.length; i++) {
+    for (let i = 0; i< currentLevel.platformBlocksArray.length; i++) {
         const currentPlatform = currentLevel.platformBlocksArray[i]
         if ( platformCollission({ obj1: object, obj2: currentPlatform}) ) {
             if(object.velocity.y > 0) {
@@ -156,13 +156,13 @@ function checkForVerticalCollissions(object) {
     }
 }
 class Coin extends Sprite {
-    constructor({position, imgSrc = './img/coin.png', scale=1.5, numFrames = 14, value=1, animationSpeed = 10}) {
+    constructor({position, imgSrc = './img/coin.png', scale = 1.5, numFrames = 14, value = 1, animationSpeed = 10}) {
         super( {position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed})
         this.isCollected = false
         this.value = value
     }
     update() {
-        if(! this.isCollected) {
+        if (! this.isCollected) {
             this.draw();
             this.animate();
         }
@@ -402,6 +402,7 @@ Player.prototype.checkForCoinCollection = function() {
             playGetCoin()
             this.coinsCollected++;
         setCoinBar((this.coinsCollected / currentLevel.numCoins) * 100)
+            updateStatsPanel()
         }
     }
 }
@@ -766,6 +767,22 @@ class Level extends Sprite {
         this.platformBlocksArray = [],
         this.coinsArray = [],
         this.slimesArray = []
+    }
+}
+function setLevelBadge() {
+    const levelBadge = document.getElementById('levelBadge')
+    if (levelBadge) {
+        levelBadge.innerHTML = 'Level ' + level
+    }
+}
+function updateStatsPanel() {
+    const coinText = document.getElementById('coinText')
+    const healthText = document.getElementById('healthText')
+    if (coinText) {
+        coinText.innerHTML = 'Coins ' + player.coinsCollected + '/' + currentLevel.numCoins
+    }
+    if (healthText) {
+        healthText.innerHTML = 'Health ' + Math.ceil(player.life)
     }
 }
 function setCoinBar(percent) {
@@ -1276,6 +1293,7 @@ const currentLevel = new Level({
 })
 currentLevel.setupLevel(1);
 level=1;
+setLevelBadge();
 const player = new Player({
     position: {
         x: 20,
@@ -1364,6 +1382,7 @@ function restart() {
     if(currentLevel.paused)
         pause();
     currentLevel.setupLevel(level);
+    setLevelBadge();
     resetLevelState();
     player.position.y = gameState.checkpoint.y;
     player.position.x = gameState.checkpoint.x;
@@ -1479,6 +1498,7 @@ function animate() {
     player.hearts.forEach(heart => {
         heart.draw();
     })
+    updateStatsPanel()
     if(currentLevel.paused) {
         applyOverlay(0.8, 'black')
         player.hearts.forEach(heart => {
@@ -1499,6 +1519,7 @@ function animate() {
             setTimeout(() => {
                 canvasContext.clearRect(0, 0, canvas.width, canvas.height);
                 currentLevel.setupLevel(++level);
+                setLevelBadge();
                 player.position.y = currentLevel.playerStartingYPos;
                 player.position.x = 20;
                 translateValues.position.y = currentLevel.yTranslateBg;
