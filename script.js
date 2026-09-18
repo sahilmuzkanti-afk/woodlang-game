@@ -868,6 +868,24 @@ class Level extends Sprite {
         this.slimesArray = []
     }
 }
+function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000)
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0')
+    const seconds = String(totalSeconds % 60).padStart(2, '0')
+    return minutes + ': ' + seconds
+}
+function setTimerBadge() {
+    const timerBadge = document.getElementById('timerBadge')
+    if (timerBadge) {
+        timerBadge.innerHTML = formatTime(gameState.elapsedMs)
+    }
+}
+function updateTimer() {
+    if (canPlay()) {
+        gameState.elapsedMs = Date.now() - gameState.startedAt
+        setTimerBadge()
+    }
+}
 function setComboBadge() {
     const comboBadge = document.getElementById('comboBadge')
     if (!comboBadge) {
@@ -1159,13 +1177,41 @@ const level1Ground = [
         y: 576,
         width: 32
     },
-    { x: 288, y: 592, width: 16 },
-    { x: 848, y: 592, width: 32 },
-    { x: 1008, y: 592, width: 32 },
-    { x: 288, y: 608, width: 16 },
-    { x: 864, y: 608, width: 16 },
-    { x: 1008, y: 608, width: 16 },
-    { x: 288, y: 624, width: 16 },
+    {
+        x: 288,
+        y: 592,
+        width: 16
+    },
+    {
+        x: 848,
+        y: 592,
+        width: 32
+    },
+    {
+        x: 1008,
+        y: 592,
+        width: 32
+    },
+    {
+        x: 288,
+        y: 608,
+        width: 16
+    },
+    {
+        x: 864,
+        y: 608,
+        width: 16
+    },
+    {
+        x: 1008,
+        y: 608,
+        width: 16
+    },
+    {
+        x: 288,
+        y: 624,
+        width: 16
+    },
     { x: 864, y: 624, width: 16 },
     { x: 1008, y: 624, width: 16 },
 ]
@@ -1560,6 +1606,7 @@ function resetRunState() {
     gameState.levelChanging = false
     gameState.startedAt = Date.now()
     gameState.elapsedMs = 0
+    setTimerBadge()
     gameState.score = 0
     gameState.combo = 0
     gameState.comboUntil = 0
@@ -1977,6 +2024,7 @@ function animate() {
         player.panCameraLeft()
     }
     updateJumpFeelText()
+    updateTimer()
     updateComboTimer()
     useBufferedJump()
     updatePlayerMovement()

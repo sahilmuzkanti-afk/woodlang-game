@@ -247,3 +247,10 @@ display: block;
 content: "";
 margin-top: 8px;
 }
+
+#timerBadge {
+color: white;
+min-width: 80px;
+text-align: right;
+white-space: nowrap;
+}
