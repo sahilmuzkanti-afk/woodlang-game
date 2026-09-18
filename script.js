@@ -302,38 +302,58 @@ class Player extends Sprite {
         }
     }
 }
+function safeCameraSteps(changeCamera) {
+    for (let i = 0; i < 80 && changeCamera(); i++) {
+    }
+}
 Player.prototype.panCameraLeft = function() {
     let cameraRight = this.cameraBox.position.x + this.cameraBox.width
     if (cameraRight >= currentLevel.mapWidth * TILE_DIM) {
         return
     }
-    while (cameraRight >= (scaledCanvas.width + Math.abs(translateValues.position.x))) {
+    safeCameraSteps(() => {
+        if (cameraRight < scaledCanvas.width + Math.abs(translateValues.position.x)) {
+            return false
+        }
         translateValues.position.x -= this.velocity.x
-    }
+        return true
+    })
 }
 Player.prototype.panCameraRight = function() {
     if (this.cameraBox.position.x <= 0) {
         return
     }
-    while (this.cameraBox.position.x <= Math.abs(translateValues.position.x)) {
-        translateValues.position.x -= this.velocity.x;
-    }
+    safeCameraSteps(() => {
+        if (this.cameraBox.position.x > Math.abs(translateValues.position.x)) {
+            return false
+        }
+        translateValues.position.x -= this.velocity.x
+        return true
+    })
 }
 Player.prototype.panCameraDown = function() {
-    if ((this.cameraBox.position.y + this.velocity.y) <= 0) {
+    if (this.cameraBox.position.y + this.velocity.y <= 0) {
         return
     }
-    while (this.cameraBox.position.y <= Math.abs(translateValues.position.y)) {
+    safeCameraSteps(() => {
+        if (this.cameraBox.position.y > Math.abs(translateValues.position.y)) {
+            return false
+        }
         translateValues.position.y -= this.velocity.y
-    }
+        return true
+    })
 }
 Player.prototype.panCameraUp = function() {
-    if ((this.cameraBox.position.y + this.cameraBox.height + this.velocity.y) >= currentLevel.mapHeight * TILE_DIM) {
+    if (this.cameraBox.position.y + this.cameraBox.height + this.velocity.y >= currentLevel.mapHeight * TILE_DIM) {
         return
     }
-    while ((this.cameraBox.position.y + this.cameraBox.height) >= (Math.abs(translateValues.position.y) + scaledCanvas.height)) {
+    safeCameraSteps(() => {
+        if (this.cameraBox.position.y + this.cameraBox.height < Math.abs(translateValues.position.y) + scaledCanvas.height) {
+            return false
+        }
         translateValues.position.y -= this.velocity.y
-    }
+        return true
+    })
 }
 Player.prototype.updateBoxes = function() {
     this.cameraBox.position.x = this.position.x - 80
@@ -444,7 +464,7 @@ Player.prototype.checkForCoinCollection = function() {
 }
 Player.prototype.setSprite = function(sprite) {
     if ((this.image == this.sprites.hurtLeft.image  || this.image == this.sprites.hurtRight.image ) && Date.now() < this.hurtUntil) {
-        return;
+        return
     }
     if (this.image == this.sprites.death.image) {
         if (this.image == this.sprites.death.image && this.currentFrame === (this.sprites.death.numFrames - 1)) {
@@ -949,7 +969,7 @@ Level.prototype.setupLevel = function(levelNo) {
 }
 Level.prototype.pausedDraw = function() {
     if (!this.loaded)
-        return;
+        return
     else {
         canvasContext.drawImage(
             this.image,
@@ -1064,9 +1084,21 @@ const level1Ground = [
         y: 192,
         width: 16
     },
-    { x: 1056, y: 208, width: 16 },
-    { x: 1056, y: 224, width: 16 },
-    { x: 1040, y: 240, width: 16 },
+    {
+        x: 1056,
+        y: 208,
+        width: 16
+    },
+    {
+        x: 1056,
+        y: 224,
+        width: 16
+    },
+    {
+        x: 1040,
+        y: 240,
+        width: 16
+    },
     { x: 1040, y: 256, width: 16 },
     { x: 1056, y: 272, width: 16 },
     { x: 1072, y: 288, width: 16 },
@@ -1819,7 +1851,7 @@ function animate() {
             heart.draw()
         })
         showCenterText('Game Paused')
-        return;
+        return
     }
     if (!currentLevel.loaded ) {
         canvasContext.fillStyle = 'rgba(124,148,161,255)'
