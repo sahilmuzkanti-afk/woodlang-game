@@ -216,3 +216,10 @@ min-width: 70px;
 body.hurtFlash {
 background-color: #5a4050;
 }
+
+#scoreInfo {
+text-shadow: 0 2px 0 rgba(0, 0, 0, .35);
+}
+#enemyText {
+color: #ffd7aa;
+}

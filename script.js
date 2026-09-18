@@ -376,13 +376,13 @@ Player.prototype.checkForVerticalCollissions = function() {
         if (detectCollission({ obj1: this, obj2: currentBlock })) {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0
-                this.isGrounded = true;
-                this.lastGroundedAt = Date.now();
+                this.isGrounded = true
+                this.lastGroundedAt = Date.now()
                 this.position.y = currentBlock.position.y - this.height - 0.02
                 break
             }
             if (this.velocity.y < 0) {
-                this.velocity.y = 0;
+                this.velocity.y = 0
                 this.position.y = currentBlock.position.y + currentBlock.height + 0.02
                 break
             }
@@ -392,9 +392,9 @@ Player.prototype.checkForVerticalCollissions = function() {
         const currentPlatform = currentLevel.platformBlocksArray[i]
         if (platformCollission({ obj1: this.hitBox, obj2: currentPlatform })) {
             if (this.velocity.y > 0) {
-                this.velocity.y = 0;
-                this.isGrounded = true;
-                this.lastGroundedAt = Date.now();
+                this.velocity.y = 0
+                this.isGrounded = true
+                this.lastGroundedAt = Date.now()
                 const offset = this.hitBox.position.y - this.position.y + this.hitBox.height
                 this.position.y = currentPlatform.position.y - offset - 0.02
                 break
@@ -421,7 +421,7 @@ Player.prototype.setSprite = function(sprite) {
     }
     if (this.image == this.sprites.death.image) {
         if (this.image == this.sprites.death.image && this.currentFrame === (this.sprites.death.numFrames - 1)) {
-            this.isAlive = false;
+            this.isAlive = false
         }
         return
     }
@@ -436,35 +436,35 @@ Player.prototype.setSprite = function(sprite) {
                 this.numFrames = this.sprites.idleLeft.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'idleRight':
             if (this.image !== this.sprites.idleRight.image) {
                 this.image = this.sprites.idleRight.image
                 this.numFrames = this.sprites.idleRight.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'runLeft':
             if (this.image !== this.sprites.runLeft.image) {
                 this.image = this.sprites.runLeft.image
                 this.numFrames = this.sprites.runLeft.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'runRight':
             if (this.image !== this.sprites.runRight.image) {
                 this.image = this.sprites.runRight.image
                 this.numFrames = this.sprites.runRight.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'hurtRight':
             if (this.image !== this.sprites.hurtRight.image) {
                 this.image = this.sprites.hurtRight.image
                 this.numFrames = this.sprites.hurtRight.numFrames
                 this.currentFrame = 1
             }
-            break;
+            break
         case 'hurtLeft':
             if (this.image !== this.sprites.hurtLeft.image) {
                 this.image = this.sprites.hurtLeft.image
@@ -511,6 +511,20 @@ function setMuted(value) {
 function toggleMute() {
     setMuted(!gameState.muted)
 }
+function updateEnemyText() {
+    const enemyText = document.getElementById('enemyText')
+    if (!enemyText) {
+        return
+    }
+    const defeated = currentLevel.slimesArray.filter(slime => !slime.isAlive).length
+    enemyText.innerHTML = 'Enemies ' + defeated
+}
+function addEnemyDefeat() {
+    updateEnemyText()
+    if (typeof addScore === 'function') {
+        addScore(25)
+    }
+}
 function playGetCoin() {
     playSimpleSound('./audio/oot_rupee_get.mp3')
 }
@@ -527,6 +541,8 @@ Player.prototype.checkForSlimesCollissions = function() {
             if (this.velocity.y > 0 && !this.isGrounded && currentSlime.isAlive && (this.position.y + this.height < currentSlime.position.y + currentSlime.height - 10)) {
                currentLevel.slimesArray[i].setSprite("death")
                currentLevel.slimesArray[i].velocity.x = 0
+               this.velocity.y = JUMP_FORCE * 0.75
+               addEnemyDefeat()
                playSimpleSound('./audio/splat.mp3')
             }
             else {
@@ -1469,13 +1485,13 @@ function restart() {
 }
 function pause() {
     if (!currentLevel.paused) {
-        currentLevel.paused = true;
-        setPauseIcon(true);
+        currentLevel.paused = true
+        setPauseIcon(true)
     } else {
-        currentLevel.paused = false;
-        hideCenterText();
-        setPauseIcon(false);
-        applyOverlay(0, 'black');
+        currentLevel.paused = false
+        hideCenterText()
+        setPauseIcon(false)
+        applyOverlay(0, 'black')
     }
 }
 const ui = {
@@ -1672,12 +1688,12 @@ function animate() {
     overlay.opacity += (overlay.target - overlay.opacity) * 0.08
     canvasContext.fillStyle = 'white'
     canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-    canvasContext.save();
-    canvasContext.scale(BACKGROUND_SCALE, BACKGROUND_SCALE);
+    canvasContext.save()
+    canvasContext.scale(BACKGROUND_SCALE, BACKGROUND_SCALE)
     canvasContext.translate(translateValues.position.x, translateValues.position.y)
-    if(!currentLevel.paused) {
-        currentLevel.update();
-        player.update();
+    if (!currentLevel.paused) {
+        currentLevel.update()
+        player.update()
     } else {
         currentLevel.pausedDraw();
         player.draw();
