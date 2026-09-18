@@ -1099,10 +1099,26 @@ const level1Ground = [
         y: 240,
         width: 16
     },
-    { x: 1040, y: 256, width: 16 },
-    { x: 1056, y: 272, width: 16 },
-    { x: 1072, y: 288, width: 16 },
-    { x: 1072, y: 304, width: 16 },
+    {
+        x: 1040,
+        y: 256,
+        width: 16
+    },
+    {
+        x: 1056,
+        y: 272,
+        width: 16
+    },
+    {
+        x: 1072,
+        y: 288,
+        width: 16
+    },
+    {
+        x: 1072,
+        y: 304,
+        width: 16
+    },
     { x: 1072, y: 320, width: 16 },
     { x: 1072, y: 336, width: 16 },
     { x: 1088, y: 352, width: 32 },
@@ -1821,6 +1837,30 @@ function drawDangerLine() {
     canvasContext.stroke()
     canvasContext.restore()
 }
+function beginLevelChange() {
+    gameState.levelChanging = true
+    currentLevel.loaded = false
+    showCenterText('Next Level')
+}
+function finishLevelChange() {
+    gameState.transitionTimer = null
+    gameState.levelChanging = false
+    currentLevel.loaded = true
+    hideCenterText()
+    setCoinBar(0)
+    updateStatsPanel()
+}
+function moveToLevel(nextLevel) {
+    level = nextLevel
+    currentLevel.setupLevel(level)
+    setLevelBadge()
+    resetLevelState()
+    player.position.y = currentLevel.playerStartingYPos
+    player.position.x = 20
+    translateValues.position.y = currentLevel.yTranslateBg
+    translateValues.position.x = 0
+    finishLevelChange()
+}
 function animate() {
     window.requestAnimationFrame(animate)
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
@@ -1859,22 +1899,13 @@ function animate() {
         VictorySheet.update()
     }
     if (player.coinsCollected === currentLevel.numCoins) {
-        currentLevel.loaded = false;
-        player.coinsCollected =0;
-        if(!currentLevel.loaded ) {
-            gameState.transitionTimer = setTimeout(() => {
-                canvasContext.setTransform(1, 0, 0, 1, 0, 0)
-                canvasContext.clearRect(0, 0, canvas.width, canvas.height)
-                currentLevel.setupLevel(++level);
-                setLevelBadge();
-                player.position.y = currentLevel.playerStartingYPos;
-                player.position.x = 20;
-                translateValues.position.y = currentLevel.yTranslateBg;
-                translateValues.position.x = 0;
-                currentLevel.loaded = true;
-                setCoinBar(0)
-            }, 3000)
-        }
+        beginLevelChange();
+        player.coinsCollected = 0;
+        gameState.transitionTimer = setTimeout(() => {
+            canvasContext.setTransform(1, 0, 0, 1, 0, 0)
+            canvasContext.clearRect(0, 0, canvas.width, canvas.height)
+            moveToLevel(level + 1)
+        }, 1600)
         playVictory()
     }
     if (!player.isAlive) {
