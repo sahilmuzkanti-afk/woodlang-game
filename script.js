@@ -573,7 +573,7 @@ Player.prototype.checkForSlimesCollissions = function() {
                                     this.setSprite("hurtRight");
                                     break
                             }
-                            break;
+                            break
                         }
                     }
                 }
@@ -592,10 +592,10 @@ Player.prototype.checkForSlimesCollissions = function() {
             switch (currentSlime.direction) {
                 case 'left':
                     currentLevel.slimesArray[i].setSprite("idleLeft")
-                    break;
+                    break
                 case 'right':
                     currentLevel.slimesArray[i].setSprite("idleRight")
-                    break;
+                    break
             }
             currentLevel.slimesArray[i].velocity.x = 0
         }
@@ -604,9 +604,9 @@ Player.prototype.checkForSlimesCollissions = function() {
         const currentPlatform = currentLevel.platformBlocksArray[i]
         if (platformCollission({ obj1: this.hitBox, obj2: currentPlatform })) {
             if (this.velocity.y > 0) {
-                this.velocity.y = 0;
-                this.isGrounded = true;
-                this.lastGroundedAt = Date.now();
+                this.velocity.y = 0
+                this.isGrounded = true
+                this.lastGroundedAt = Date.now()
                 const offset = this.hitBox.position.y - this.position.y + this.hitBox.height
                 this.position.y = currentPlatform.position.y - offset - 0.02
                 break
@@ -618,21 +618,21 @@ function inSlimeRange({ player, slime }) {
     if (player.position.y + ENEMY_VERTICAL_RANGE >= slime.position.y && player.position.y - ENEMY_VERTICAL_RANGE <= slime.position.y) {
         if (onRightOfSlime({player, slime})) {
             if (player.position.x < slime.position.x + slime.width*3) {
-                return true;
+                return true
             } else {
-                return false;
+                return false
             }
         } else if (onLeftOfSlime({player, slime})) {
             if (player.position.x > slime.position.x - slime.width*2) {
-                return true;
+                return true
             } else {
-                return false;
+                return false
             }
         } else {
-            return false;
+            return false
         }
     } else {
-        return false;
+        return false
     }
 }
 class Enemy extends Sprite {
@@ -659,9 +659,9 @@ Enemy.prototype.applyGravity = function() {
     this.velocity.y += GRAVITY
 }
 Enemy.prototype.update = function() {
-    this.draw();
+    this.draw()
     if (this.isAlive) {
-        this.animate();
+        this.animate()
         this.position.x += this.velocity.x
         keepEnemyOnPatrol(this)
         checkForHorizontalCollissions(this)
@@ -728,9 +728,9 @@ function playGameOver() {
 }
 function onRightOfSlime({ player, slime }) {
     if (player.position.x > slime.position.x + slime.width)
-        return true;
+        return true
     else
-        return false;
+        return false
 }
 function playVictory() {
     playSimpleSound('./audio/rupee-collect.mp3')
@@ -738,7 +738,7 @@ function playVictory() {
 Enemy.prototype.setSprite = function(sprite) {
     if (this.image == this.sprites.death.image) {
         if (this.image == this.sprites.death.image && this.currentFrame === (this.sprites.death.numFrames-1) ) {
-            this.isAlive = false;
+            this.isAlive = false
         }
         return
     }
@@ -755,14 +755,14 @@ Enemy.prototype.setSprite = function(sprite) {
                 this.numFrames = this.sprites.idleLeft.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'idleRight':
             if (this.image !== this.sprites.idleRight.image) {
                 this.image = this.sprites.idleRight.image
                 this.numFrames = this.sprites.idleRight.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'runLeft':
             if (this.image !== this.sprites.runLeft.image) {
                 this.image = this.sprites.runLeft.image
@@ -819,6 +819,29 @@ class Level extends Sprite {
         this.platformBlocksArray = [],
         this.coinsArray = [],
         this.slimesArray = []
+    }
+}
+function setComboBadge() {
+    const comboBadge = document.getElementById('comboBadge')
+    if (!comboBadge) {
+        return
+    }
+    comboBadge.innerHTML = gameState.combo > 1 ? 'Combo x' + gameState.combo : ''
+}
+function addCombo() {
+    const now = Date.now()
+    if (now < gameState.comboUntil) {
+        gameState.combo++
+    } else {
+        gameState.combo = 1
+    }
+    gameState.comboUntil = now + 1800
+    setComboBadge()
+}
+function updateComboTimer() {
+    if (gameState.combo > 0 && Date.now() > gameState.comboUntil) {
+        gameState.combo = 0
+        setComboBadge()
     }
 }
 function setLevelBadge() {
@@ -1778,6 +1801,7 @@ function animate() {
         player.panCameraLeft()
     }
     updateJumpFeelText()
+    updateComboTimer()
     useBufferedJump()
     updatePlayerMovement()
 }

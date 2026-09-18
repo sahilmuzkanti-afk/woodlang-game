@@ -227,3 +227,10 @@ color: #ffd7aa;
 #enemyText {
 min-width: 82px;
 }
+
+#comboBadge {
+color: #e4d053;
+min-width: 90px;
+text-align: right;
+white-space: nowrap;
+}
