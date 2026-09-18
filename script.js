@@ -1119,14 +1119,46 @@ const level1Ground = [
         y: 304,
         width: 16
     },
-    { x: 1072, y: 320, width: 16 },
-    { x: 1072, y: 336, width: 16 },
-    { x: 1088, y: 352, width: 32 },
-    { x: 320, y: 560, width: 528 },
-    { x: 1040, y: 560, width: 80 },
-    { x: 304, y: 576, width: 16 },
-    { x: 848, y: 576, width: 16 },
-    { x: 1024, y: 576, width: 32 },
+    {
+        x: 1072,
+        y: 320,
+        width: 16
+    },
+    {
+        x: 1072,
+        y: 336,
+        width: 16
+    },
+    {
+        x: 1088,
+        y: 352,
+        width: 32
+    },
+    {
+        x: 320,
+        y: 560,
+        width: 528
+    },
+    {
+        x: 1040,
+        y: 560,
+        width: 80
+    },
+    {
+        x: 304,
+        y: 576,
+        width: 16
+    },
+    {
+        x: 848,
+        y: 576,
+        width: 16
+    },
+    {
+        x: 1024,
+        y: 576,
+        width: 32
+    },
     { x: 288, y: 592, width: 16 },
     { x: 848, y: 592, width: 32 },
     { x: 1008, y: 592, width: 32 },
@@ -1837,6 +1869,19 @@ function drawDangerLine() {
     canvasContext.stroke()
     canvasContext.restore()
 }
+function finishGame() {
+    gameState.finalVictory = true
+    currentLevel.paused = true
+    setPauseIcon(true)
+    showCenterText('Victory<br>All coins collected')
+    playVictory()
+}
+function isLastLevel() {
+    return level >= 2
+}
+function canLeaveVictory() {
+    return gameState.finalVictory
+}
 function beginLevelChange() {
     gameState.levelChanging = true
     currentLevel.loaded = false
@@ -1899,6 +1944,10 @@ function animate() {
         VictorySheet.update()
     }
     if (player.coinsCollected === currentLevel.numCoins) {
+        if (isLastLevel()) {
+            finishGame()
+            return
+        }
         beginLevelChange();
         player.coinsCollected = 0;
         gameState.transitionTimer = setTimeout(() => {

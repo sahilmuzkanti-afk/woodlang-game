@@ -238,3 +238,12 @@ white-space: nowrap;
 #mainDiv {
 background-color: #25384a;
 }
+
+#scoreInfo {
+background-color: rgba(0, 0, 0, .18);
+}
+#scoreInfo br {
+display: block;
+content: "";
+margin-top: 8px;
+}
