@@ -471,14 +471,14 @@ Player.prototype.setSprite = function(sprite) {
                 this.numFrames = this.sprites.hurtLeft.numFrames
                 this.currentFrame = 1
             }
-            break;
+            break
         case 'death':
             if (this.image !== this.sprites.death.image) {
                 this.image = this.sprites.death.image
                 this.numFrames = this.sprites.death.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
     }
 }
 function randomizeDirection() {
@@ -530,9 +530,9 @@ function playGetCoin() {
 }
 function onLeftOfSlime({ player, slime }) {
     if (player.position.x < slime.position.x)
-        return true;
+        return true
     else
-        return false;
+        return false
 }
 Player.prototype.checkForSlimesCollissions = function() {
     for (let i = 0; i < currentLevel.slimesArray.length; i++) {
@@ -549,10 +549,10 @@ Player.prototype.checkForSlimesCollissions = function() {
                 switch (currentSlime.direction) {
                     case 'left':
                         currentLevel.slimesArray[i].setSprite("attackLeft")
-                        break;
+                        break
                     case 'right':
                         currentLevel.slimesArray[i].setSprite("attackRight")
-                        break;
+                        break
                 }
                 if (Date.now() >= this.hurtUntil && currentLevel.slimesArray[i].image != currentLevel.slimesArray[i].sprites.death.image) {
                     for (let i = 2; i >= 0; i--) {
@@ -568,10 +568,10 @@ Player.prototype.checkForSlimesCollissions = function() {
                             switch (this.direction) {
                                 case 'left':
                                     this.setSprite("hurtLeft");
-                                    break;
+                                    break
                                 case 'right':
                                     this.setSprite("hurtRight");
-                                    break;
+                                    break
                             }
                             break;
                         }
@@ -644,6 +644,8 @@ class Enemy extends Sprite {
         },
         this.sprites = sprites,
         this.direction = randomizeDirection(),
+        this.startX = position.x,
+        this.patrolDistance = 70,
         this.isAlive = true,
         this.hurtSound = new Audio('./audio/splat.mp3')
         for (const key in this.sprites) {
@@ -661,9 +663,30 @@ Enemy.prototype.update = function() {
     if (this.isAlive) {
         this.animate();
         this.position.x += this.velocity.x
+        keepEnemyOnPatrol(this)
         checkForHorizontalCollissions(this)
         this.applyGravity()
         checkForVerticalCollissions(this)
+    }
+}
+function faceEnemy(enemy, direction) {
+    enemy.direction = direction
+    if (direction === 'left') {
+        enemy.setSprite('attackLeft')
+    } else {
+        enemy.setSprite('attackRight')
+    }
+}
+function keepEnemyOnPatrol(enemy) {
+    if (enemy.position.x > enemy.startX + enemy.patrolDistance) {
+        enemy.position.x = enemy.startX + enemy.patrolDistance
+        enemy.velocity.x = -Math.abs(enemy.velocity.x || MOVEMENT_SPEED)
+        faceEnemy(enemy, 'left')
+    }
+    if (enemy.position.x < enemy.startX - enemy.patrolDistance) {
+        enemy.position.x = enemy.startX - enemy.patrolDistance
+        enemy.velocity.x = Math.abs(enemy.velocity.x || MOVEMENT_SPEED)
+        faceEnemy(enemy, 'right')
     }
 }
 function createSlime(xpos, ypos) {
@@ -1695,26 +1718,26 @@ function animate() {
         currentLevel.update()
         player.update()
     } else {
-        currentLevel.pausedDraw();
-        player.draw();
+        currentLevel.pausedDraw()
+        player.draw()
     }
-    canvasContext.restore();
+    canvasContext.restore()
     player.hearts.forEach(heart => {
-        heart.draw();
+        heart.draw()
     })
     updateStatsPanel()
-    if(currentLevel.paused) {
+    if (currentLevel.paused) {
         applyOverlay(0.8, 'black')
         player.hearts.forEach(heart => {
-            heart.draw();
+            heart.draw()
         })
-        showCenterText('Game Paused');
+        showCenterText('Game Paused')
         return;
     }
     if(!currentLevel.loaded ) {
         canvasContext.fillStyle = 'rgba(124,148,161,255)'
         canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-        VictorySheet.update();
+        VictorySheet.update()
     }
     if (player.coinsCollected === currentLevel.numCoins) {
         currentLevel.loaded = false;
@@ -1733,26 +1756,26 @@ function animate() {
                 setCoinBar(0)
             }, 3000)
         }
-        playVictory();
+        playVictory()
     }
-    if(!player.isAlive) {
+    if (!player.isAlive) {
         canvasContext.fillStyle = 'rgba(78,60,92,255)'
         canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-        GameOverSheet.update();
+        GameOverSheet.update()
         if (!gameOverPlayed) {
             playGameOver()
             gameOverPlayed = true
         }
     }
     if (player.velocity.y < 0) {
-        player.panCameraDown();
+        player.panCameraDown()
     } else if (player.velocity.y > 0) {
         player.panCameraUp()
     }
     if (player.velocity.x < 0) {
-        player.panCameraRight();
+        player.panCameraRight()
     } else if (player.velocity.x > 0) {
-        player.panCameraLeft();
+        player.panCameraLeft()
     }
     updateJumpFeelText()
     useBufferedJump()
