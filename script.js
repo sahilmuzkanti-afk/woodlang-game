@@ -28,7 +28,7 @@ const scaledCanvas = {
     height: canvas.height / BACKGROUND_SCALE
 }
 class Sprite {
-    constructor({position, imageSrc, scale = 1, numFrames = 1, animationSpeed = ANIMATION_SPEED}) {
+    constructor({ position, imageSrc, scale = 1, numFrames = 1, animationSpeed = ANIMATION_SPEED }) {
         this.position = position
         this.image = new Image()
         this.image.src = imageSrc
@@ -77,7 +77,7 @@ Sprite.prototype.animate = function() {
     }
 }
 class CollissionBlock {
-    constructor({position, height = TILE_DIM}) {
+    constructor({ position, height = TILE_DIM }) {
         this.position = position
         this.width = TILE_DIM
         this.height = height
@@ -111,7 +111,7 @@ function platformCollission({ obj1, obj2 }) {
 function checkForHorizontalCollissions(object) {
     for (let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
-        if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
+        if ( detectCollission({ obj1: object, obj2: currentBlock }) ) {
             if (object.velocity.x > 0) {
                 object.velocity.x = 0
                 object.position.x = currentBlock.position.x - object.width -0.02
@@ -128,7 +128,7 @@ function checkForHorizontalCollissions(object) {
 function checkForVerticalCollissions(object) {
     for (let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
-        if ( detectCollission({ obj1: object, obj2: currentBlock}) ) {
+        if ( detectCollission({ obj1: object, obj2: currentBlock }) ) {
             if (object.velocity.y > 0) {
                 object.velocity.y = 0
                 object.isGrounded=true
@@ -144,7 +144,7 @@ function checkForVerticalCollissions(object) {
     }
     for (let i = 0; i< currentLevel.platformBlocksArray.length; i++) {
         const currentPlatform = currentLevel.platformBlocksArray[i]
-        if ( platformCollission({ obj1: object, obj2: currentPlatform}) ) {
+        if ( platformCollission({ obj1: object, obj2: currentPlatform }) ) {
             if (object.velocity.y > 0) {
                 object.velocity.y = 0
                 object.isGrounded=true
@@ -155,9 +155,35 @@ function checkForVerticalCollissions(object) {
         }
     }
 }
+const coinParticles = []
+function addCoinParticles(x, y) {
+    for (let i = 0; i < 8; i++) {
+        coinParticles.push({
+            x: x + 8,
+            y: y + 8,
+            vx: (Math.random() - .5) * 2,
+            vy: -Math.random() * 2,
+            life: 26
+        })
+    }
+}
+function drawCoinParticles() {
+    for (let i = coinParticles.length - 1; i >= 0; i--) {
+        const particle = coinParticles[i]
+        canvasContext.fillStyle = '#e4d053'
+        canvasContext.fillRect(particle.x, particle.y, 2, 2)
+        particle.x += particle.vx
+        particle.y += particle.vy
+        particle.vy += .05
+        particle.life--
+        if (particle.life <= 0) {
+            coinParticles.splice(i, 1)
+        }
+    }
+}
 class Coin extends Sprite {
-    constructor({position, imgSrc = './img/coin.png', scale = 1.5, numFrames = 14, value = 1, animationSpeed = 10}) {
-        super( {position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed})
+    constructor({ position, imgSrc = './img/coin.png', scale = 1.5, numFrames = 14, value = 1, animationSpeed = 10 }) {
+        super( { position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed })
         this.isCollected = false
         this.value = value
     }
@@ -169,8 +195,8 @@ class Coin extends Sprite {
     }
 }
 class Heart extends Sprite {
-    constructor({position, imgSrc = './img/heart/heart_sheet.png', scale = 2.5, numFrames = 5}) {
-        super( {position: position, imageSrc: imgSrc , scale, numFrames})
+    constructor({ position, imgSrc = './img/heart/heart_sheet.png', scale = 2.5, numFrames = 5 }) {
+        super( { position: position, imageSrc: imgSrc , scale, numFrames })
         this.filled = 1.0,
         this.borderImg = new Image()
         this.borderImg.src = './img/heart/border.png'
@@ -408,6 +434,7 @@ Player.prototype.checkForCoinCollection = function() {
         if (detectCollission({ obj1: this.hitBox, obj2: currentCoin }) && currentCoin.isCollected == false) {
             currentLevel.coinsArray[i].isCollected = true
             playGetCoin()
+            addCoinParticles(currentCoin.position.x, currentCoin.position.y)
             this.coinsCollected++
         setCoinBar((this.coinsCollected / currentLevel.numCoins) * 100)
             updateStatsPanel()
@@ -769,28 +796,28 @@ Enemy.prototype.setSprite = function(sprite) {
                 this.numFrames = this.sprites.runLeft.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'runRight':
             if (this.image !== this.sprites.runRight.image) {
                 this.image = this.sprites.runRight.image
                 this.numFrames = this.sprites.runRight.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'death':
             if (this.image !== this.sprites.death.image) {
                 this.image = this.sprites.death.image
                 this.numFrames = this.sprites.death.numFrames
                 this.currentFrame = 0
             }
-            break;
+            break
         case 'attackLeft':
         if (this.image !== this.sprites.attackLeft.image) {
             this.image = this.sprites.attackLeft.image
             this.numFrames = this.sprites.attackLeft.numFrames
             this.currentFrame=0
         }
-        break;
+        break
         case 'attackRight':
         if (this.image !== this.sprites.attackRight.image) {
             this.image = this.sprites.attackRight.image
@@ -1006,8 +1033,8 @@ Level.prototype.initArrays = function() {
     })
 }
 Level.prototype.update = function() {
-    this.draw();
-    this.animate();
+    this.draw()
+    this.animate()
     this.collissionBlocksArray.forEach(collissionBlick => {
         collissionBlick.update()
     })
@@ -1368,7 +1395,7 @@ const currentLevel = new Level({
 })
 currentLevel.setupLevel(1)
 level = 1
-setLevelBadge();
+setLevelBadge()
 const player = new Player({
     position: {
         x: 20,
@@ -1564,7 +1591,7 @@ function applyOverlay(alpha, color) {
     canvasContext.save()
     canvasContext.globalAlpha = overlay.opacity
     canvasContext.fillStyle = color
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
     canvasContext.restore()
     overlay.target = alpha
 }
@@ -1733,12 +1760,13 @@ function animate() {
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
     overlay.opacity += (overlay.target - overlay.opacity) * 0.08
     canvasContext.fillStyle = 'white'
-    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height)
     canvasContext.save()
     canvasContext.scale(BACKGROUND_SCALE, BACKGROUND_SCALE)
     canvasContext.translate(translateValues.position.x, translateValues.position.y)
     if (!currentLevel.paused) {
         currentLevel.update()
+        drawCoinParticles()
         player.update()
     } else {
         currentLevel.pausedDraw()
@@ -1757,9 +1785,9 @@ function animate() {
         showCenterText('Game Paused')
         return;
     }
-    if(!currentLevel.loaded ) {
+    if (!currentLevel.loaded ) {
         canvasContext.fillStyle = 'rgba(124,148,161,255)'
-        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height)
         VictorySheet.update()
     }
     if (player.coinsCollected === currentLevel.numCoins) {
@@ -1783,7 +1811,7 @@ function animate() {
     }
     if (!player.isAlive) {
         canvasContext.fillStyle = 'rgba(78,60,92,255)'
-        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height)
         GameOverSheet.update()
         if (!gameOverPlayed) {
             playGameOver()
