@@ -109,7 +109,7 @@ function platformCollission({ obj1, obj2 }) {
     ) { return true } else { return false }
 }
 function checkForHorizontalCollissions(object) {
-    for (let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
+    for (let i=0; i < currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if ( detectCollission({ obj1: object, obj2: currentBlock }) ) {
             if (object.velocity.x > 0) {
@@ -117,7 +117,7 @@ function checkForHorizontalCollissions(object) {
                 object.position.x = currentBlock.position.x - object.width -0.02
                 break
             }
-            if (object.velocity.x<0) {
+            if (object.velocity.x < 0) {
                 object.velocity.x = 0
                 object.position.x = currentBlock.position.x + currentBlock.width + 0.02
                 break
@@ -126,7 +126,7 @@ function checkForHorizontalCollissions(object) {
     }
 }
 function checkForVerticalCollissions(object) {
-    for (let i=0; i< currentLevel.collissionBlocksArray.length; i++) {
+    for (let i=0; i < currentLevel.collissionBlocksArray.length; i++) {
         const currentBlock = currentLevel.collissionBlocksArray[i]
         if ( detectCollission({ obj1: object, obj2: currentBlock }) ) {
             if (object.velocity.y > 0) {
@@ -135,14 +135,14 @@ function checkForVerticalCollissions(object) {
              object.position.y = currentBlock.position.y -object.height-0.02
                 break
             }
-            if (object.velocity.y<0) {
+            if (object.velocity.y < 0) {
                 object.velocity.y = 0
                 object.position.y = currentBlock.position.y  + currentBlock.height + 0.02
                 break
             }
         }
     }
-    for (let i = 0; i< currentLevel.platformBlocksArray.length; i++) {
+    for (let i = 0; i < currentLevel.platformBlocksArray.length; i++) {
         const currentPlatform = currentLevel.platformBlocksArray[i]
         if ( platformCollission({ obj1: object, obj2: currentPlatform }) ) {
             if (object.velocity.y > 0) {
@@ -643,13 +643,13 @@ Player.prototype.checkForSlimesCollissions = function() {
 }
 function inSlimeRange({ player, slime }) {
     if (player.position.y + ENEMY_VERTICAL_RANGE >= slime.position.y && player.position.y - ENEMY_VERTICAL_RANGE <= slime.position.y) {
-        if (onRightOfSlime({player, slime})) {
+        if (onRightOfSlime({ player, slime })) {
             if (player.position.x < slime.position.x + slime.width*3) {
                 return true
             } else {
                 return false
             }
-        } else if (onLeftOfSlime({player, slime})) {
+        } else if (onLeftOfSlime({ player, slime })) {
             if (player.position.x > slime.position.x - slime.width*2) {
                 return true
             } else {
@@ -663,8 +663,8 @@ function inSlimeRange({ player, slime }) {
     }
 }
 class Enemy extends Sprite {
-    constructor({position, imgSrc, scale = 1, numFrames = 1, sprites, animationSpeed = ANIMATION_SPEED}) {
-        super( {position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed})
+    constructor({ position, imgSrc, scale = 1, numFrames = 1, sprites, animationSpeed = ANIMATION_SPEED }) {
+        super( { position: position, imageSrc: imgSrc , scale, numFrames, animationSpeed })
         this.velocity = {
             x: 0,
             y: 0
@@ -1049,9 +1049,21 @@ Level.prototype.update = function() {
     })
 }
 const level1Ground = [
-    { x: 1088, y: 160, width: 32 },
-    { x: 1088, y: 176, width: 16 },
-    { x: 1072, y: 192, width: 16 },
+    {
+        x: 1088,
+        y: 160,
+        width: 32
+    },
+    {
+        x: 1088,
+        y: 176,
+        width: 16
+    },
+    {
+        x: 1072,
+        y: 192,
+        width: 16
+    },
     { x: 1056, y: 208, width: 16 },
     { x: 1056, y: 224, width: 16 },
     { x: 1040, y: 240, width: 16 },
@@ -1368,8 +1380,8 @@ Level.prototype.setupLevel = function(levelNo) {
 
 const GameOverSheet = new Sprite({
    position: {
-    x:canvas.width/2 - 180,
-    y:canvas.height/2 - 70
+    x: canvas.width/2 - 180,
+    y: canvas.height/2 - 70
    },
    scale: 4,
    numFrames: 12,
@@ -1378,8 +1390,8 @@ const GameOverSheet = new Sprite({
 })
 const VictorySheet = new Sprite({
     position: {
-     x:canvas.width/2 - 140,
-     y:canvas.height/2 - 80
+     x: canvas.width/2 - 140,
+     y: canvas.height/2 - 80
     },
     scale: 4,
     numFrames: 13,
@@ -1423,7 +1435,7 @@ const player = new Player({
         },
         hurtLeft: {
             spriteSrc: './img/Player/Hurt_Left.png',
-            numFrames:2
+            numFrames: 2
         },
         hurtRight: {
             spriteSrc: './img/Player/Hurt_Right.png',
@@ -1755,6 +1767,28 @@ function updatePlayerMovement() {
         }
     }
 }
+function drawWaterWarning() {
+    const bottom = player.position.y + player.height
+    const distance = currentLevel.waterLevel - bottom
+    if (distance > 75 || distance < 0 || !player.isAlive) {
+        return
+    }
+    canvasContext.save()
+    canvasContext.fillStyle = 'rgba(255, 245, 190, .95)'
+    canvasContext.font = '18px Syne Mono'
+    canvasContext.fillText('Water close', 24, 88)
+    canvasContext.restore()
+}
+function drawDangerLine() {
+    canvasContext.save()
+    canvasContext.strokeStyle = 'rgba(100, 220, 255, .8)'
+    canvasContext.lineWidth = 2
+    canvasContext.beginPath()
+    canvasContext.moveTo(0, currentLevel.waterLevel)
+    canvasContext.lineTo(currentLevel.mapWidth * TILE_DIM, currentLevel.waterLevel)
+    canvasContext.stroke()
+    canvasContext.restore()
+}
 function animate() {
     window.requestAnimationFrame(animate)
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
@@ -1766,6 +1800,7 @@ function animate() {
     canvasContext.translate(translateValues.position.x, translateValues.position.y)
     if (!currentLevel.paused) {
         currentLevel.update()
+        drawDangerLine()
         drawCoinParticles()
         player.update()
     } else {
@@ -1776,6 +1811,7 @@ function animate() {
     player.hearts.forEach(heart => {
         heart.draw()
     })
+    drawWaterWarning()
     updateStatsPanel()
     if (currentLevel.paused) {
         applyOverlay(0.8, 'black')
