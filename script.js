@@ -871,8 +871,26 @@ class Level extends Sprite {
 function setScoreBadge() {
     const scoreBadge = document.getElementById('scoreBadge')
     if (scoreBadge) {
-        scoreBadge.innerHTML = 'Score ' + gameState.score
+        scoreBadge.innerHTML = 'Score ' + gameState.score + ' Best ' + gameState.bestScore
     }
+}
+function saveBestScore() {
+    if (gameState.score > gameState.bestScore) {
+        gameState.bestScore = gameState.score
+        localStorage.setItem('woodlandBestScore', String(gameState.bestScore))
+        showBestBanner()
+    }
+}
+function showBestBanner() {
+    const bestBanner = document.getElementById('bestBanner')
+    if (!bestBanner) {
+        return
+    }
+    bestBanner.innerHTML = 'New best score'
+    bestBanner.classList.add('show')
+    setTimeout(() => {
+        bestBanner.classList.remove('show')
+    }, 1200)
 }
 function addScore(points) {
     gameState.score += points
@@ -1273,12 +1291,36 @@ const level1Platforms = [
         y: 128,
         width: 96
     },
-    { x: 176, y: 176, width: 32 },
-    { x: 544, y: 176, width: 80 },
-    { x: 16, y: 224, width: 80 },
-    { x: 496, y: 224, width: 32 },
-    { x: 752, y: 224, width: 96 },
-    { x: 224, y: 256, width: 80 },
+    {
+        x: 176,
+        y: 176,
+        width: 32
+    },
+    {
+        x: 544,
+        y: 176,
+        width: 80
+    },
+    {
+        x: 16,
+        y: 224,
+        width: 80
+    },
+    {
+        x: 496,
+        y: 224,
+        width: 32
+    },
+    {
+        x: 752,
+        y: 224,
+        width: 96
+    },
+    {
+        x: 224,
+        y: 256,
+        width: 80
+    },
     { x: 448, y: 288, width: 96 },
     { x: 928, y: 288, width: 80 },
     { x: 96, y: 320, width: 96 },
@@ -1641,6 +1683,7 @@ const gameState = {
     startedAt: Date.now(),
     elapsedMs: 0,
     score: 0,
+    bestScore: Number(localStorage.getItem('woodlandBestScore') || 0),
     combo: 0,
     comboUntil: 0,
     transitionTimer: null,
