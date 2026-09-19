@@ -601,7 +601,7 @@ Player.prototype.checkForSlimesCollissions = function() {
                         currentLevel.slimesArray[i].setSprite("attackRight")
                         break
                 }
-                if (Date.now() >= this.hurtUntil && currentLevel.slimesArray[i].image != currentLevel.slimesArray[i].sprites.death.image) {
+                if (Date.now() >= this.hurtUntil && currentLevel.slimesArray[i].image !== currentLevel.slimesArray[i].sprites.death.image) {
                     hurtPlayer.call(this)
                 }
             }
@@ -1754,6 +1754,7 @@ function restart() {
     setupMovingPlatforms()
     setupShieldPickup()
     prepareEnemyPatrols()
+    setupSecretBlocks()
     resetLevelState()
     resetPlayerState()
     resetViewState()
@@ -2060,6 +2061,7 @@ function moveToLevel(nextLevel) {
     setupMovingPlatforms()
     setupShieldPickup()
     prepareEnemyPatrols()
+    setupSecretBlocks()
     setLevelBadge()
     resetLevelState()
     resetPlayerState()
@@ -2305,6 +2307,86 @@ function updateEnemyChase() {
 
 prepareEnemyPatrols()
 
+const secretBlocks = []
+let secretsFound = 0
+let secretMessageUntil = 0
+
+function addSecretBlock(x, y, coins) {
+    secretBlocks.push({
+        x: x,
+        y: y,
+        width: 16,
+        height: 16,
+        coins: coins,
+        broken: false
+    })
+}
+
+function setupSecretBlocks() {
+    secretBlocks.length = 0
+    secretsFound = 0
+    secretMessageUntil = 0
+    if (level === 1) {
+        addSecretBlock(544, 352, 3)
+        addSecretBlock(1008, 416, 2)
+    } else {
+        addSecretBlock(400, 288, 3)
+        addSecretBlock(1392, 240, 4)
+    }
+}
+
+function secretTouchesPlayer(block) {
+    return player.hitBox.position.x + player.hitBox.width > block.x &&
+        player.hitBox.position.x < block.x + block.width &&
+        player.hitBox.position.y + player.hitBox.height > block.y &&
+        player.hitBox.position.y < block.y + block.height
+}
+
+function playerBreaksSecret(block) {
+    return !block.broken && secretTouchesPlayer(block) && player.velocity.y < 0
+}
+
+function breakSecretBlock(block) {
+    block.broken = true
+    secretsFound++
+    secretMessageUntil = Date.now() + 1200
+    addScore(block.coins * 25)
+    for (let i = 0; i < block.coins; i++) {
+        addCoinParticles(block.x + i * 4, block.y)
+    }
+    playGetCoin()
+}
+
+function drawSecretBlock(block) {
+    if (block.broken) {
+        return
+    }
+    canvasContext.fillStyle = '#59473a'
+    canvasContext.fillRect(block.x, block.y, block.width, block.height)
+    canvasContext.fillStyle = '#7b6957'
+    canvasContext.fillRect(block.x + 3, block.y + 3, 10, 3)
+}
+
+function updateSecretBlocks() {
+    secretBlocks.forEach(block => {
+        if (playerBreaksSecret(block)) {
+            breakSecretBlock(block)
+        }
+        drawSecretBlock(block)
+    })
+}
+
+function drawSecretMessage() {
+    if (Date.now() >= secretMessageUntil) {
+        return
+    }
+    canvasContext.fillStyle = 'rgba(255, 245, 190, .95)'
+    canvasContext.font = '16px Syne Mono'
+    canvasContext.fillText('Secret found ' + secretsFound + '/2', 24, 112)
+}
+
+setupSecretBlocks()
+
 function animate() {
     window.requestAnimationFrame(animate)
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
@@ -2321,6 +2403,7 @@ function animate() {
         updateMovingPlatforms()
         updateShield()
         updateEnemyChase()
+        updateSecretBlocks()
         player.update()
     } else {
         currentLevel.pausedDraw()
@@ -2331,6 +2414,7 @@ function animate() {
         heart.draw()
     })
     drawWaterWarning()
+    drawSecretMessage()
     updateStatsPanel()
     if (currentLevel.paused) {
         applyOverlay(0.8, 'black')
