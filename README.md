@@ -43,13 +43,16 @@ I also added level selection, level unlocking, and saved level records so player
 
 ### Gram
 
-I mainly worked on the levels and map system of the game. 
-I added different enemy animation states and created the level system for handling multiple maps. 
-I also worked on loading platforms, collision blocks, coins and enemies from the map data, and added the collision and platform layout used in the first level.
+I mainly worked on the level and enemy systems of the game. 
+I added enemy animations... built the level system for handling different maps.. and worked on loading platforms and coins and enemies and and collision blocks from the map data. 
+
+I also added moving platforms... improved enemy movement with patrolling and chasing mechanics, 
+I improved the game controls, added keyboard shortcuts, sound effects,
+I also worked on the game reset system, added an enemy defeat counter, improved the layout for smaller screens
 
 **Slack ID:** U09EED1L2AH  
-**Hours:** 3 hr 40 min  
-**Contribution:** 28.1%
+**Hours:** 12 hr 32 min  
+**Contribution:** 28.1% (16 out of 48 commits)
 
 
 ## Features
