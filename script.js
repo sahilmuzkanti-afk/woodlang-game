@@ -463,7 +463,7 @@ Player.prototype.checkForCoinCollection = function() {
     }
 }
 Player.prototype.setSprite = function(sprite) {
-    if ((this.image == this.sprites.hurtLeft.image  || this.image == this.sprites.hurtRight.image ) && Date.now() < this.hurtUntil) {
+    if ((this.image === this.sprites.hurtLeft.image  || this.image == this.sprites.hurtRight.image ) && Date.now() < this.hurtUntil) {
         return
     }
     if (this.image == this.sprites.death.image) {
@@ -1753,6 +1753,7 @@ function restart() {
     currentLevel.setupLevel(level)
     setupMovingPlatforms()
     setupShieldPickup()
+    prepareEnemyPatrols()
     resetLevelState()
     resetPlayerState()
     resetViewState()
@@ -2058,6 +2059,7 @@ function moveToLevel(nextLevel) {
     currentLevel.setupLevel(level)
     setupMovingPlatforms()
     setupShieldPickup()
+    prepareEnemyPatrols()
     setLevelBadge()
     resetLevelState()
     resetPlayerState()
@@ -2228,6 +2230,81 @@ function useShield() {
 
 setupShieldPickup()
 
+const chaseState = {
+    range: 150,
+    stopRange: 22,
+    speed: .8,
+    returnSpeed: .35
+}
+
+function prepareEnemyPatrols() {
+    currentLevel.slimesArray.forEach((enemy, index) => {
+        enemy.homeX = enemy.position.x
+        enemy.patrolDistance = 42 + index % 3 * 12
+        enemy.chasing = false
+    })
+}
+
+function enemyDistanceFromPlayer(enemy) {
+    return Math.abs(player.position.x - enemy.position.x)
+}
+
+function enemyCanChase(enemy) {
+    const verticalDistance = Math.abs(player.position.y - enemy.position.y)
+    return enemy.isAlive && player.isAlive &&
+        enemyDistanceFromPlayer(enemy) < chaseState.range && verticalDistance < 54
+}
+
+function faceEnemy(enemy, direction) {
+    enemy.direction = direction < 0 ? 'left' : 'right'
+    enemy.setSprite(direction < 0 ? 'attackLeft' : 'attackRight')
+}
+
+function chasePlayer(enemy) {
+    const distance = player.position.x - enemy.position.x
+    if (Math.abs(distance) <= chaseState.stopRange) {
+        enemy.velocity.x = 0
+        return
+    }
+    const direction = distance < 0 ? -1 : 1
+    enemy.velocity.x = chaseState.speed * direction
+    faceEnemy(enemy, direction)
+}
+
+function returnEnemyHome(enemy) {
+    const distance = enemy.homeX - enemy.position.x
+    if (Math.abs(distance) < 3) {
+        enemy.velocity.x = 0
+        enemy.position.x = enemy.homeX
+        return
+    }
+    const direction = distance < 0 ? -1 : 1
+    enemy.velocity.x = chaseState.returnSpeed * direction
+    faceEnemy(enemy, direction)
+}
+
+function keepEnemyInPatrol(enemy) {
+    if (Math.abs(enemy.position.x - enemy.homeX) <= enemy.patrolDistance) {
+        return
+    }
+    enemy.position.x = enemy.homeX + Math.sign(enemy.position.x - enemy.homeX) * enemy.patrolDistance
+    enemy.velocity.x *= -1
+}
+
+function updateEnemyChase() {
+    currentLevel.slimesArray.forEach(enemy => {
+        enemy.chasing = enemyCanChase(enemy)
+        if (enemy.chasing) {
+            chasePlayer(enemy)
+        } else {
+            returnEnemyHome(enemy)
+        }
+        keepEnemyInPatrol(enemy)
+    })
+}
+
+prepareEnemyPatrols()
+
 function animate() {
     window.requestAnimationFrame(animate)
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
@@ -2243,6 +2320,7 @@ function animate() {
         drawCoinParticles()
         updateMovingPlatforms()
         updateShield()
+        updateEnemyChase()
         player.update()
     } else {
         currentLevel.pausedDraw()
