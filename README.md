@@ -8,9 +8,9 @@ The main goal is pretty simple: explore the map and collect all the coins and tr
 
 ## How to Play
 
-* A - Move left
-* D - Move right
-* W - Jump
+* A - player go left
+* D - player go right
+* W - player jumpsss
 
 You can also use the buttons beside the game to pause or restart it.
 
@@ -18,14 +18,16 @@ You can also use the buttons beside the game to pause or restart it.
 
 ### Sahil
 
-I mainly worked on the gameplay and enemy mechanics. 
-I added player movement, gravity, coin collection and different player animations. 
-I also worked on player damage, enemy attacks and slime behaviour, including making enemies follow and attack the player.
-I also added different game sounds and the main enemy system.
+I mainly worked on the gameplay and player mechanics...
+I added player movement.... different player animations.... coin collection... and enemy attacks. 
+I also worked on enemy movement... sounds.. and the damage system. 
+I improved the camera movement added coin particles...water warnings...and  health bR coins,
+I also added a timer... score system... saved best scores... and easy... normal...and hard difficulty modes.
+Finally, I improved the level transitions, worked on the victory and game over screens.
 
 **Slack ID:** U0ALP8WH8HY  
-**Hours:** 4 hr 7 min  
-**Contribution:** 31.6%
+**Hours:** 12 hr 4 min  
+**Contribution:** 32.15% ( 13 out of 48 commits )
 
 
 ### Viraj
