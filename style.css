@@ -254,3 +254,10 @@ min-width: 80px;
 text-align: right;
 white-space: nowrap;
 }
+
+#scoreBadge {
+color: white;
+min-width: 110px;
+text-align: right;
+white-space: nowrap;
+}

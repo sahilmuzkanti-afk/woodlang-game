@@ -868,6 +868,19 @@ class Level extends Sprite {
         this.slimesArray = []
     }
 }
+function setScoreBadge() {
+    const scoreBadge = document.getElementById('scoreBadge')
+    if (scoreBadge) {
+        scoreBadge.innerHTML = 'Score ' + gameState.score
+    }
+}
+function addScore(points) {
+    gameState.score += points
+    setScoreBadge()
+}
+function addCoinScore() {
+    addScore(10 + gameState.combo * 2)
+}
 function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000)
     const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0')
@@ -1212,18 +1225,54 @@ const level1Ground = [
         y: 624,
         width: 16
     },
-    { x: 864, y: 624, width: 16 },
-    { x: 1008, y: 624, width: 16 },
+    {
+        x: 864,
+        y: 624,
+        width: 16
+    },
+    {
+        x: 1008,
+        y: 624,
+        width: 16
+    },
 ]
 
 const level1Platforms = [
-    { x: 240, y: 80, width: 48 },
-    { x: 976, y: 80, width: 112 },
-    { x: 320, y: 112, width: 80 },
-    { x: 480, y: 112, width: 32 },
-    { x: 1088, y: 112, width: 32 },
-    { x: 64, y: 128, width: 80 },
-    { x: 672, y: 128, width: 96 },
+    {
+        x: 240,
+        y: 80,
+        width: 48
+    },
+    {
+        x: 976,
+        y: 80,
+        width: 112
+    },
+    {
+        x: 320,
+        y: 112,
+        width: 80
+    },
+    {
+        x: 480,
+        y: 112,
+        width: 32
+    },
+    {
+        x: 1088,
+        y: 112,
+        width: 32
+    },
+    {
+        x: 64,
+        y: 128,
+        width: 80
+    },
+    {
+        x: 672,
+        y: 128,
+        width: 96
+    },
     { x: 176, y: 176, width: 32 },
     { x: 544, y: 176, width: 80 },
     { x: 16, y: 224, width: 80 },
