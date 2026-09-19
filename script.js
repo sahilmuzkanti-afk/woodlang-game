@@ -1644,8 +1644,6 @@ const player = new Player({
         }
     }
 })
-const scoreInfo = document.getElementById('scoreInfo')
-const pauseBtnImg = document.getElementById('pauseBtnImg')
 const translateValues = {
     position: {
         x: 0,
@@ -1753,6 +1751,7 @@ function restart() {
     currentLevel.loaded = true
     gameState.finalVictory = false
     currentLevel.setupLevel(level)
+    setupMovingPlatforms()
     resetLevelState()
     resetPlayerState()
     resetViewState()
@@ -2053,12 +2052,94 @@ function finishLevelChange() {
 function moveToLevel(nextLevel) {
     level = nextLevel
     currentLevel.setupLevel(level)
+    setupMovingPlatforms()
     setLevelBadge()
     resetLevelState()
     resetPlayerState()
     resetViewState()
     finishLevelChange()
 }
+const movingPlatforms = []
+
+function makeMovingPlatform(x, y, distance, speed, vertical) {
+    movingPlatforms.push({
+        x: x,
+        y: y,
+        startX: x,
+        startY: y,
+        width: 48,
+        height: 9,
+        distance: distance,
+        speed: speed,
+        direction: 1,
+        vertical: vertical,
+        lastX: x,
+        lastY: y
+    })
+}
+
+function setupMovingPlatforms() {
+    movingPlatforms.length = 0
+    if (level === 1) {
+        makeMovingPlatform(320, 224, 96, .55, false)
+        makeMovingPlatform(816, 352, 80, .45, true)
+    } else {
+        makeMovingPlatform(368, 272, 112, .6, false)
+        makeMovingPlatform(1040, 240, 96, .5, true)
+    }
+}
+
+function playerOnMovingPlatform(platform) {
+    const playerBottom = player.position.y + player.height
+    const horizontal = player.position.x + player.width > platform.x &&
+        player.position.x < platform.x + platform.width
+    return horizontal && player.velocity.y >= 0 &&
+        playerBottom >= platform.y - 5 && playerBottom <= platform.y + 8
+}
+
+function movePlatform(platform) {
+    platform.lastX = platform.x
+    platform.lastY = platform.y
+    if (platform.vertical) {
+        platform.y += platform.speed * platform.direction
+        if (Math.abs(platform.y - platform.startY) >= platform.distance) {
+            platform.direction *= -1
+        }
+    } else {
+        platform.x += platform.speed * platform.direction
+        if (Math.abs(platform.x - platform.startX) >= platform.distance) {
+            platform.direction *= -1
+        }
+    }
+}
+
+function carryPlayerWithPlatform(platform) {
+    if (!playerOnMovingPlatform(platform)) {
+        return
+    }
+    player.position.x += platform.x - platform.lastX
+    player.position.y = platform.y - player.height
+    player.velocity.y = 0
+    player.isGrounded = true
+}
+
+function drawMovingPlatform(platform) {
+    canvasContext.fillStyle = '#6a4938'
+    canvasContext.fillRect(platform.x, platform.y, platform.width, platform.height)
+    canvasContext.fillStyle = '#8fa85a'
+    canvasContext.fillRect(platform.x, platform.y, platform.width, 3)
+}
+
+function updateMovingPlatforms() {
+    movingPlatforms.forEach(platform => {
+        movePlatform(platform)
+        carryPlayerWithPlatform(platform)
+        drawMovingPlatform(platform)
+    })
+}
+
+setupMovingPlatforms()
+
 function animate() {
     window.requestAnimationFrame(animate)
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
@@ -2072,6 +2153,7 @@ function animate() {
         currentLevel.update()
         drawDangerLine()
         drawCoinParticles()
+        updateMovingPlatforms()
         player.update()
     } else {
         currentLevel.pausedDraw()
