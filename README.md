@@ -58,7 +58,13 @@ I also worked on loading platforms, collision blocks, coins and enemies from the
 * you actually gets 3 hearts 
 * if you get in touch with enemy you get your 1 life waste
 * the camera moves along with your gameplay
-* Pause and restart 
+* Pause and restart
+
+## Demo video
+
+
+https://github.com/user-attachments/assets/75dd5379-0ebf-4728-9d11-6e8c27b22a85
+
 
 ## Built With
 
