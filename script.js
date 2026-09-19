@@ -451,7 +451,7 @@ Player.prototype.checkForVerticalCollissions = function() {
 Player.prototype.checkForCoinCollection = function() {
     for (let i = 0; i < currentLevel.coinsArray.length; i++) {
         const currentCoin = currentLevel.coinsArray[i]
-        if (detectCollission({ obj1: this.hitBox, obj2: currentCoin }) && currentCoin.isCollected == false) {
+        if (detectCollission({ obj1: this.hitBox, obj2: currentCoin }) && currentCoin.isCollected === false) {
             currentLevel.coinsArray[i].isCollected = true
             playGetCoin()
             addCoinParticles(currentCoin.position.x, currentCoin.position.y)
@@ -1752,6 +1752,7 @@ function restart() {
     gameState.finalVictory = false
     currentLevel.setupLevel(level)
     setupMovingPlatforms()
+    setupShieldPickup()
     resetLevelState()
     resetPlayerState()
     resetViewState()
@@ -1936,6 +1937,9 @@ function difficultyDamage() {
     return 2
 }
 function hurtPlayer() {
+    if (useShield()) {
+        return
+    }
     let damage = difficultyDamage()
     for (let i = 2; i >= 0 && damage > 0; i--) {
         while (this.hearts[i].filled !== 0 && damage > 0) {
@@ -2053,6 +2057,7 @@ function moveToLevel(nextLevel) {
     level = nextLevel
     currentLevel.setupLevel(level)
     setupMovingPlatforms()
+    setupShieldPickup()
     setLevelBadge()
     resetLevelState()
     resetPlayerState()
@@ -2140,6 +2145,89 @@ function updateMovingPlatforms() {
 
 setupMovingPlatforms()
 
+const shieldState = {
+    active: false,
+    expiresAt: 0,
+    pickup: null,
+    duration: 7000
+}
+
+function setupShieldPickup() {
+    shieldState.active = false
+    shieldState.expiresAt = 0
+    shieldState.pickup = {
+        x: level === 1 ? 880 : 1248,
+        y: level === 1 ? 304 : 176,
+        collected: false
+    }
+}
+
+function shieldTouchesPlayer() {
+    const pickup = shieldState.pickup
+    if (!pickup || pickup.collected) {
+        return false
+    }
+    return player.position.x + player.width > pickup.x &&
+        player.position.x < pickup.x + 18 &&
+        player.position.y + player.height > pickup.y &&
+        player.position.y < pickup.y + 18
+}
+
+function collectShield() {
+    shieldState.pickup.collected = true
+    shieldState.active = true
+    shieldState.expiresAt = Date.now() + shieldState.duration
+    addScore(50)
+    playGetCoin()
+}
+
+function drawShieldPickup() {
+    const pickup = shieldState.pickup
+    if (!pickup || pickup.collected) {
+        return
+    }
+    canvasContext.fillStyle = '#7dd7e8'
+    canvasContext.beginPath()
+    canvasContext.arc(pickup.x + 9, pickup.y + 9, 9, 0, Math.PI * 2)
+    canvasContext.fill()
+    canvasContext.strokeStyle = 'white'
+    canvasContext.stroke()
+}
+
+function drawPlayerShield() {
+    if (!shieldState.active) {
+        return
+    }
+    canvasContext.strokeStyle = 'rgba(125, 215, 232, .85)'
+    canvasContext.lineWidth = 2
+    canvasContext.beginPath()
+    canvasContext.arc(player.position.x + player.width / 2, player.position.y + player.height / 2, 24, 0, Math.PI * 2)
+    canvasContext.stroke()
+}
+
+function updateShield() {
+    if (shieldTouchesPlayer()) {
+        collectShield()
+    }
+    if (shieldState.active && Date.now() >= shieldState.expiresAt) {
+        shieldState.active = false
+    }
+    drawShieldPickup()
+    drawPlayerShield()
+}
+
+function useShield() {
+    if (!shieldState.active) {
+        return false
+    }
+    shieldState.active = false
+    shieldState.expiresAt = 0
+    flashDamage()
+    return true
+}
+
+setupShieldPickup()
+
 function animate() {
     window.requestAnimationFrame(animate)
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
@@ -2154,6 +2242,7 @@ function animate() {
         drawDangerLine()
         drawCoinParticles()
         updateMovingPlatforms()
+        updateShield()
         player.update()
     } else {
         currentLevel.pausedDraw()
