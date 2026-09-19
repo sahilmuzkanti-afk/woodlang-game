@@ -30,13 +30,16 @@ I also added different game sounds and the main enemy system.
 
 ### Viraj
 
-I worked on the starting part of the game and built most of the basic systems.
-I set up the main game screen, canvas and controls, and worked on sprite animations and collisions.
-I also added the coin and health systems, created the basic player setup and added the camera movement.
+I worked on the main foundation of the game... including the game screen...
+I also improved the jumping and falling mechanics to make movement feel smoother and added checkpoints so restarting the game works better. 
+Later,
+I worked on the damage system, added a combo system, and created hidden bonus blocks that reward players with extra points. 
+I also added level selection, level unlocking, and saved level records so players can track their progress.
+
 
 **Slack ID:** U08234X6Y1K  
-**Hours:** 5 hr 15 min  
-**Contribution:** 40.3%
+**Hours:** 12 hrs 52 min  
+**Contribution:** 34.43% (13 out of 48 commit)
 
 ### Gram
 
