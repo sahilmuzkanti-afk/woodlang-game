@@ -52,7 +52,7 @@ I also worked on the game reset system, added an enemy defeat counter, improved 
 
 **Slack ID:** U09EED1L2AH  
 **Hours:** 12 hr 32 min  
-**Contribution:** 28.1% (16 out of 48 commits)
+**Contribution:** 33.46% (16 out of 48 commits)
 
 
 ## Features
