@@ -602,27 +602,7 @@ Player.prototype.checkForSlimesCollissions = function() {
                         break
                 }
                 if (Date.now() >= this.hurtUntil && currentLevel.slimesArray[i].image != currentLevel.slimesArray[i].sprites.death.image) {
-                    for (let i = 2; i >= 0; i--) {
-                        if (this.hearts[i].filled !== 0) {
-                            this.hearts[i].hurt();
-                            this.hurting = true;
-                            this.hurtUntil = Date.now() + 900;
-                            flashDamage();
-                            playSimpleSound('./audio/zelda_hit.mp3')
-                            setTimeout(() => {
-                                this.hurting = false;
-                            }, 500)
-                            switch (this.direction) {
-                                case 'left':
-                                    this.setSprite("hurtLeft");
-                                    break
-                                case 'right':
-                                    this.setSprite("hurtRight");
-                                    break
-                            }
-                            break
-                        }
-                    }
+                    hurtPlayer.call(this)
                 }
             }
         } else if (inSlimeRange({ player: this, slime: currentSlime }) && currentSlime.image != currentSlime.sprites.death.image) {
@@ -844,7 +824,7 @@ Enemy.prototype.setSprite = function(sprite) {
             this.numFrames = this.sprites.attackRight.numFrames
             this.currentFrame=0
         }
-        break;
+        break
     }
 }
 class Level extends Sprite {
@@ -897,7 +877,7 @@ function addScore(points) {
     setScoreBadge()
 }
 function addCoinScore() {
-    addScore(10 + gameState.combo * 2)
+    addScore((10 + gameState.combo * 2) * (gameState.difficulty === 'hard' ? 2 : 1))
 }
 function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000)
@@ -987,7 +967,7 @@ Level.prototype.setupLevel = function(levelNo) {
                 this.slimes2D.push(slimesMap1.slice(i, i + this.mapWidth))
             }
             this.initArrays()
-            break;
+            break
             case 2:
                 this.image.src = './img/map2.png'
                 this.levelNo = levelNo
@@ -1013,7 +993,7 @@ Level.prototype.setupLevel = function(levelNo) {
                     this.slimes2D.push(slimesMap2.slice(i, i + this.mapWidth))
                 }
                 this.initArrays()
-                break;
+                break
     }
 }
 Level.prototype.pausedDraw = function() {
@@ -1780,9 +1760,7 @@ function restart() {
     setPauseIcon(false)
     hideCenterText()
     setCoinBar(0)
-    if (typeof coinParticles !== 'undefined') {
-        coinParticles.length = 0
-    }
+    coinParticles.length = 0
     gameOverPlayed = false
     resetRunState()
     updateStatsPanel()
@@ -1943,6 +1921,44 @@ function handleWindowBlur() {
     clearMovementKeys()
 }
 window.addEventListener('blur', handleWindowBlur)
+function setDifficulty(value) {
+    gameState.difficulty = value
+    document.querySelectorAll('.difficultyBtn').forEach(button => {
+        button.classList.toggle('active', button.dataset.difficulty === value)
+    })
+}
+function difficultyDamage() {
+    if (gameState.difficulty === 'easy') {
+        return 1
+    }
+    if (gameState.difficulty === 'hard') {
+        return 3
+    }
+    return 2
+}
+function hurtPlayer() {
+    let damage = difficultyDamage()
+    for (let i = 2; i >= 0 && damage > 0; i--) {
+        while (this.hearts[i].filled !== 0 && damage > 0) {
+            this.hearts[i].hurt()
+            damage--
+        }
+    }
+    this.hurting = true
+    this.hurtUntil = Date.now() + 900
+    playSimpleSound('./audio/zelda_hit.mp3')
+    setTimeout(() => {
+        this.hurting = false
+    }, 500)
+    if (this.direction === 'left') {
+        this.setSprite('hurtLeft')
+    } else {
+        this.setSprite('hurtRight')
+    }
+}
+document.querySelectorAll('.difficultyBtn').forEach(button => {
+    button.addEventListener('click', () => setDifficulty(button.dataset.difficulty))
+})
 function setTouchKey(keyName, pressed) {
     KEYS[keyName].pressed = pressed
     if (pressed) {
@@ -2039,10 +2055,8 @@ function moveToLevel(nextLevel) {
     currentLevel.setupLevel(level)
     setLevelBadge()
     resetLevelState()
-    player.position.y = currentLevel.playerStartingYPos
-    player.position.x = 20
-    translateValues.position.y = currentLevel.yTranslateBg
-    translateValues.position.x = 0
+    resetPlayerState()
+    resetViewState()
     finishLevelChange()
 }
 function animate() {
@@ -2090,8 +2104,6 @@ function animate() {
         beginLevelChange();
         player.coinsCollected = 0;
         gameState.transitionTimer = setTimeout(() => {
-            canvasContext.setTransform(1, 0, 0, 1, 0, 0)
-            canvasContext.clearRect(0, 0, canvas.width, canvas.height)
             moveToLevel(level + 1)
         }, 1600)
         playVictory()

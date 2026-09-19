@@ -276,3 +276,28 @@ transition: opacity .2s ease;
 #bestBanner.show {
 opacity: 1;
 }
+
+#difficultyPanel {
+display: none;
+justify-content: center;
+gap: 8px;
+margin-top: 4px;
+}
+.difficultyBtn {
+border-radius: 8px;
+padding: 4px 10px;
+background-color: #435d42;
+color: white;
+border: 1px solid #d8ead8;
+transition: background-color .2s ease;
+font-size: 13px;
+}
+.difficultyBtn.active {
+background-color: #75c9b1;
+color: #10251e;
+}
+@media (max-width: 520px) {
+#difficultyPanel {
+display: flex;
+}
+}
