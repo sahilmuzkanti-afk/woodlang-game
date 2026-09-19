@@ -301,3 +301,121 @@ color: #10251e;
 display: flex;
 }
 }
+
+
+#levelSelect {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 8px;
+margin-top: 6px;
+color: antiquewhite;
+font-size: 13px;
+}
+.levelBtn {
+width: 30px;
+height: 28px;
+padding: 0;
+border-radius: 6px;
+background-color: #435d42;
+color: white;
+transition: background-color .2s ease;
+}
+.levelBtn.active {
+background-color: #75c9b1;
+color: #10251e;
+}
+.levelBtn:disabled {
+cursor: default;
+opacity: .45;
+}
+
+body {
+margin: 0;
+min-height: 100vh;
+padding: 14px;
+overflow-x: hidden;
+}
+#outermost {
+width: min(100%, 1120px);
+}
+#game {
+width: 100%;
+align-items: flex-start;
+}
+#mainDiv {
+flex: 1 1 auto;
+min-width: 0;
+}
+canvas {
+width: 100%;
+max-width: 1024px;
+height: auto;
+}
+
+@media (max-width: 760px) {
+#game {
+display: block;
+}
+#mainDiv {
+display: block;
+width: 100%;
+}
+#sidediv {
+display: flex;
+justify-content: center;
+gap: 12px;
+min-width: 0;
+margin: 10px 0 0;
+padding: 0;
+}
+.btnContainer {
+padding: 0;
+}
+.btnImg {
+width: 42px;
+height: 42px;
+}
+#topBar {
+justify-content: center;
+}
+#statsPanel {
+justify-content: center;
+white-space: normal;
+}
+#scoreInfo {
+font-size: 26px;
+}
+canvas {
+max-width: 100%;
+}
+}
+
+@media (max-width: 420px) {
+body {
+padding: 8px;
+}
+h1 {
+font-size: 27px;
+}
+.textBox p {
+font-size: 14px;
+}
+#statsPanel {
+font-size: 12px;
+gap: 7px;
+}
+#helpPanel {
+display: none;
+}
+#touchControls {
+display: flex;
+}
+.touchBtn {
+width: 64px;
+height: 44px;
+}
+#levelSelect {
+margin-top: 10px;
+}
+}

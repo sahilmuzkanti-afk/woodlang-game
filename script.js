@@ -1745,6 +1745,7 @@ function canPlay() {
 }
 let gameOverPlayed = false
 function restart() {
+    level = selectedLevel
     cancelLevelChange()
     clearMovementKeys()
     currentLevel.paused = false
@@ -2387,6 +2388,103 @@ function drawSecretMessage() {
 
 setupSecretBlocks()
 
+const levelRecords = JSON.parse(localStorage.getItem('woodlandLevelRecords') || '{}')
+let selectedLevel = 1
+
+function highestUnlockedLevel() {
+    return levelRecords[1] ? 2 : 1
+}
+
+function saveLevelRecords() {
+    localStorage.setItem('woodlandLevelRecords', JSON.stringify(levelRecords))
+}
+
+function updateLevelRecord(levelNumber) {
+    const oldRecord = levelRecords[levelNumber]
+    const newRecord = {
+        score: gameState.score,
+        time: gameState.elapsedMs
+    }
+    if (!oldRecord || newRecord.score > oldRecord.score ||
+        newRecord.score === oldRecord.score && newRecord.time < oldRecord.time) {
+        levelRecords[levelNumber] = newRecord
+        saveLevelRecords()
+    }
+    updateLevelButtons()
+}
+
+function levelRecordText(levelNumber) {
+    const record = levelRecords[levelNumber]
+    if (!record) {
+        return 'No record'
+    }
+    return 'Best ' + record.score + ' in ' + formatTime(record.time)
+}
+
+function updateLevelButtons() {
+    const unlocked = highestUnlockedLevel()
+    document.querySelectorAll('.levelBtn').forEach(button => {
+        const buttonLevel = Number(button.dataset.level)
+        button.disabled = buttonLevel > unlocked
+        button.classList.toggle('active', buttonLevel === selectedLevel)
+        button.title = levelRecordText(buttonLevel)
+    })
+}
+
+function selectLevel(levelNumber) {
+    if (levelNumber > highestUnlockedLevel()) {
+        return
+    }
+    selectedLevel = levelNumber
+    level = levelNumber
+    currentLevel.setupLevel(level)
+    setupMovingPlatforms()
+    setupShieldPickup()
+    prepareEnemyPatrols()
+    setupSecretBlocks()
+    resetLevelState()
+    resetPlayerState()
+    resetViewState()
+    setLevelBadge()
+    setCoinBar(0)
+    updateStatsPanel()
+    updateLevelButtons()
+}
+
+document.querySelectorAll('.levelBtn').forEach(button => {
+    button.addEventListener('click', () => {
+        selectLevel(Number(button.dataset.level))
+    })
+})
+
+function drawLevelRecord() {
+    const record = levelRecords[level]
+    if (!record || currentLevel.paused) {
+        return
+    }
+    canvasContext.fillStyle = 'rgba(255, 245, 190, .85)'
+    canvasContext.font = '14px Syne Mono'
+    canvasContext.fillText('Level best ' + record.score, 24, 136)
+}
+
+function completeCurrentLevel() {
+    updateLevelRecord(level)
+    if (isLastLevel()) {
+        finishGame()
+        return
+    }
+    beginLevelChange()
+    player.coinsCollected = 0
+    gameState.transitionTimer = setTimeout(() => {
+        moveToLevel(level + 1)
+        selectedLevel = level
+        updateLevelButtons()
+    }, 1600)
+    playVictory()
+}
+
+updateLevelButtons()
+
 function animate() {
     window.requestAnimationFrame(animate)
     canvasContext.setTransform(1, 0, 0, 1, 0, 0)
@@ -2415,6 +2513,7 @@ function animate() {
     })
     drawWaterWarning()
     drawSecretMessage()
+    drawLevelRecord()
     updateStatsPanel()
     if (currentLevel.paused) {
         applyOverlay(0.8, 'black')
@@ -2430,16 +2529,7 @@ function animate() {
         VictorySheet.update()
     }
     if (player.coinsCollected === currentLevel.numCoins) {
-        if (isLastLevel()) {
-            finishGame()
-            return
-        }
-        beginLevelChange();
-        player.coinsCollected = 0;
-        gameState.transitionTimer = setTimeout(() => {
-            moveToLevel(level + 1)
-        }, 1600)
-        playVictory()
+        completeCurrentLevel()
     }
     if (!player.isAlive) {
         canvasContext.fillStyle = 'rgba(78,60,92,255)'
