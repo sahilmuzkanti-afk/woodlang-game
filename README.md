@@ -4,7 +4,10 @@ Woodland Heights is a small 2D platformer game we made using HTML, CSS and JavaS
 
 The main goal is pretty simple: explore the map and collect all the coins and try to stay alive while avoiding enemies 
 
+## AI usage
 
+i used ai on a specific feature , where it shows what are you doing cuurently ( look at the below ) 
+like if you are jumping, it will show jumping,..... i did because... it will help in jumping time. it guides accordingly .... and its just used for this only... and nothing else
 
 ## How to Play
 
